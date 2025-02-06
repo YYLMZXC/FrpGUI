@@ -1,7 +1,8 @@
 ﻿using FrpGUI.Models;
-using FrpGUI.WebAPI.Models;
+using FrpGUI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace FrpGUI.WebAPI.Controllers;
 
@@ -10,23 +11,24 @@ namespace FrpGUI.WebAPI.Controllers;
 [Route("[controller]")]
 public class LogController : ControllerBase
 {
-    private readonly FrpDbContext db;
+    private readonly Logger logger;
 
-    public LogController(FrpDbContext db)
+    public LogController(LoggerBase logger)
     {
-        this.db = db;
+        this.logger = (Logger)logger;
     }
 
     [HttpGet("List")]
-    public async Task<IList<LogEntity>> GetAsync(DateTime timeAfter)
+    public IList<LogEntity> Get(DateTime timeAfter)
     {
-        var logs = await db.Logs
+        Debug.WriteLine(logger.CacheLogs.Count);
+        var logs = logger.CacheLogs
               .Where(p => p.ProcessStartTime == LogEntity.CurrentProcessStartTime)
               .Where(p => p.Time > timeAfter)
               .OrderByDescending(p => p.Time)
               .Take(100)
-              .ToListAsync();
-        logs.Reverse();
+              .Reverse()
+              .ToList();
         return logs;
     }
 }

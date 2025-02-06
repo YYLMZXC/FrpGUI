@@ -40,8 +40,7 @@ public partial class MainWindow : ExtendedWindow
             Close();
         }
 
-        Debug.Assert(processes != null);
-        if (processes.Any(p => p.Value.ProcessStatus == ProcessStatus.Running))
+        if (processes != null && processes.Any(p => p.Value.ProcessStatus == ProcessStatus.Running))
         {
             if (!IsVisible)
             {
