@@ -31,6 +31,8 @@ namespace FrpGUI.Avalonia.ViewModels
         [ObservableProperty]
         private bool startup;
 
+        [ObservableProperty]
+        private string token;
         public SettingViewModel(IDataProvider provider, UIConfig config,IStartupManager startupManager) : base(provider)
         {
             this.startupManager = startupManager;
@@ -47,19 +49,8 @@ namespace FrpGUI.Avalonia.ViewModels
             };
         }
 
-        partial void OnStartupChanged(bool value)
-        {
-            if (value)
-            {
-                startupManager.EnableStartup("s");
-                Config.ShowTrayIcon = true;
-            }
-            else
-            {
-                startupManager.DisableStartup();
-            }
-        }
-        
+        public UIConfig Config { get; }
+
         private async void FillProcesses()
         {
             try
@@ -69,8 +60,6 @@ namespace FrpGUI.Avalonia.ViewModels
             catch (Exception ex)
             { }
         }
-
-        public UIConfig Config { get; }
 
         [RelayCommand]
         private async Task KillProcessAsync(ProcessInfo p)
@@ -92,13 +81,25 @@ namespace FrpGUI.Avalonia.ViewModels
             }
         }
 
+        partial void OnStartupChanged(bool value)
+        {
+            if (value)
+            {
+                startupManager.EnableStartup("s");
+                Config.ShowTrayIcon = true;
+            }
+            else
+            {
+                startupManager.DisableStartup();
+            }
+        }
         [RelayCommand]
         private async Task RestartAsync()
         {
             Config.ServerAddress = ServerAddress;
-            if (!string.IsNullOrEmpty(NewToken))
+            if (!string.IsNullOrEmpty(Token))
             {
-                Config.ServerToken = NewToken;
+                Config.ServerToken = Token;
             }
             Config.Save();
 
