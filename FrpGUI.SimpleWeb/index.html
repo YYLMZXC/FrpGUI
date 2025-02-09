@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FrpGUI 服务控制</title>
+    <style>
+        :root {
+    --background-light: #ffffff;
+    --text-light: #333;
+    --border-light: #ccc;
+    --card-light: #f9f9f9;
+    --info-light: #e8f4ff;
+    
+    --background-dark: #1e1e1e;
+    --text-dark: #ddd;
+    --border-dark: #444;
+    --card-dark: #2a2a2a;
+    --info-dark: #3a4a5e;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: var(--background-light);
+    color: var(--text-light);
+}
+
+h1 {
+    color: var(--text-light);
+    text-align: center;
+}
+
+.token-input {
+    margin-bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.token-input input {
+    padding: 8px;
+    flex: 1;
+    border: 1px solid var(--border-light);
+    border-radius: 4px;
+    background-color: var(--background-light);
+    color: var(--text-light);
+}
+
+.token-input button {
+    padding: 8px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.service {
+    border: 1px solid var(--border-light);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: var(--card-light);
+}
+
+.service h3 {
+    margin: 0 0 10px 0;
+    color: var(--text-light);
+}
+
+.service p {
+    margin: 8px 0;
+    color: var(--text-light);
+}
+
+.dashboard-info {
+    background: var(--info-light);
+    padding: 10px;
+    border-radius: 4px;
+    margin: 10px 0;
+}
+
+.dashboard-info a {
+    color: #2980b9;
+    text-decoration: none;
+}
+
+.dashboard-info a:hover {
+    text-decoration: underline;
+}
+
+.service button {
+    margin-right: 8px;
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: white; /* 确保按钮字体为白色 */
+}
+
+.service button.start {
+    background-color: #27ae60;
+}
+
+.service button.stop {
+    background-color: #c0392b;
+}
+
+.service button.restart {
+    background-color: #2980b9;
+}
+
+/* 深色模式 */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: var(--background-dark);
+        color: var(--text-dark);
+    }
+
+    h1 {
+        color: var(--text-dark);
+    }
+
+    .token-input input {
+        border: 1px solid var(--border-dark);
+        background-color: var(--background-dark);
+        color: var(--text-dark);
+    }
+
+    .service {
+        border: 1px solid var(--border-dark);
+        background-color: var(--card-dark);
+    }
+
+    .service h3,
+    .service p {
+        color: var(--text-dark);
+    }
+
+    .dashboard-info {
+        background: var(--info-dark);
+    }
+
+    .token-input button {
+        color: white;
+    }
+}
+
+    </style>
+    <script>
+        //90%由DeepSeek完成，9%由ChatGPT完成，1%由我完成
+        alert("请先修改代码，设置后端地址")
+        const backendUrl = ""; //填写后端地址
+
+        // Cookie操作函数
+        function getTokenFromCookie() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'frp_token') return decodeURIComponent(value);
+            }
+            return null;
+        }
+
+        function saveTokenToCookie(token) {
+            document.cookie = `frp_token=${encodeURIComponent(token)}; path=/; max-age=86400`;
+        }
+
+        // 页面加载初始化
+        window.onload = function () {
+            const token = getTokenFromCookie();
+            if (token) {
+                document.getElementById('token-input').value = token;
+                fetchFrpStatus(token);
+            }
+        };
+
+        // 获取服务状态
+        async function fetchFrpStatus(token) {
+            try {
+                const response = await fetch(`${backendUrl}/Process/Status`, {
+                    headers: { 'Authorization': token }
+                });
+                if (!response.ok) throw new Error('获取状态失败');
+                displayFrpStatus(await response.json());
+            } catch (error) {
+                console.error('错误:', error);
+                alert('获取服务状态失败');
+            }
+        }
+
+        // 显示服务状态
+        function displayFrpStatus(services) {
+            const container = document.getElementById('services');
+            container.innerHTML = '';
+            
+            services.forEach(service => {
+                const serviceDiv = document.createElement('div');
+                serviceDiv.className = 'service';
+                
+                // 构建Dashboard信息
+                const dashboardHtml = service.config.dashBoardPort ? `
+                    <div class="dashboard-info">
+                        <a href="${buildDashboardUrl(service.config)}" target="_blank">
+                            访问控制面板
+                        </a>
+                        <span>账号: ${service.config.dashBoardUsername || '无'}</span>
+                        <span>密码: ${service.config.dashBoardPassword || '无'}</span>
+                    </div>
+                ` : '';
+
+                serviceDiv.innerHTML = `
+                    <h3>${service.config.name}</h3>
+                    ${dashboardHtml}
+                    <p>状态: ${getStatusText(service.processStatus)}</p>
+                    <div>
+                        <button class="start" onclick="controlFrp('Start', '${service.config.id}')">启动</button>
+                        <button class="stop" onclick="controlFrp('Stop', '${service.config.id}')">停止</button>
+                        <button class="restart" onclick="controlFrp('Restart', '${service.config.id}')">重启</button>
+                    </div>
+                `;
+                container.appendChild(serviceDiv);
+            });
+        }
+
+        // 构建Dashboard URL
+        function buildDashboardUrl(config) {
+            const port = config.dashBoardPort;
+            const username = config.dashBoardUsername;
+            const password = config.dashBoardPassword;
+            const address = new URL(backendUrl).hostname;
+            return `http://${address}:${port}`;
+        }
+
+        // 控制操作
+        async function controlFrp(action, id) {
+            const token = getTokenFromCookie();
+            if (!token) return alert('请先输入Token');
+
+            try {
+                const response = await fetch(`${backendUrl}/Process/${action}/${id}`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `${token}` }
+                });
+                if (!response.ok) throw new Error('操作失败');
+                alert('操作成功！');
+                fetchFrpStatus(token);
+            } catch (error) {
+                console.error('错误:', error);
+                alert('操作失败');
+            }
+        }
+
+        // 状态文本转换
+        function getStatusText(statusCode) {
+            return ['已停止', '运行中', '重启中'][statusCode] || '未知状态';
+        }
+
+        // Token输入处理
+        function handleTokenInput() {
+            const token = document.getElementById('token-input').value.trim();
+            if (!token) return alert('请输入Token');
+            saveTokenToCookie(token);
+            fetchFrpStatus(token);
+        }
+    </script>
+</head>
+<body>
+    <h1>Frp 服务控制台</h1>
+    <div class="token-input">
+        <input type="text" id="token-input" placeholder="请输入访问令牌">
+        <button onclick="handleTokenInput()">连接</button>
+    </div>
+    <div id="services">
+        <!-- 服务状态动态加载 -->
+    </div>
+</body>
+</html>
