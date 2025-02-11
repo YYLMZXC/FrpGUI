@@ -15,6 +15,7 @@
   <ItemGroup>
     <AvaloniaXaml Remove="obj\**" />
     <Compile Remove="obj\**" />
+    <Content Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
   </ItemGroup>

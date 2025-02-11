@@ -9,7 +9,7 @@
     <PackageVersion Include="Avalonia.Xaml.Interactivity" Version="11.1.0.4" />
     <PackageVersion Include="BinToss.GroupBox.Avalonia" Version="1.0.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageVersion Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+    <PackageVersion Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.2.3" />
     <PackageVersion Include="Avalonia.Desktop" Version="11.2.3" />
     <PackageVersion Include="Avalonia.Browser" Version="11.2.3" />
     <PackageVersion Include="FzLib" Version="2.2.5" />
