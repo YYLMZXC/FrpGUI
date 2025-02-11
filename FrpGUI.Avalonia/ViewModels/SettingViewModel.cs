@@ -9,13 +9,12 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using FzLib.Program.Startup;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FrpGUI.Avalonia.ViewModels
 {
     public partial class SettingViewModel : ViewModelBase
     {
-        private readonly IStartupManager startupManager;
-
         [ObservableProperty]
         private string newToken;
 
@@ -33,10 +32,12 @@ namespace FrpGUI.Avalonia.ViewModels
 
         [ObservableProperty]
         private string token;
-        public SettingViewModel(IDataProvider provider, UIConfig config,IStartupManager startupManager) : base(provider)
+        public SettingViewModel(IDataProvider provider, UIConfig config) : base(provider)
         {
-            this.startupManager = startupManager;
-            startup = startupManager.IsStartupEnabled();
+            if (!OperatingSystem.IsBrowser())
+            {
+                startup = App.Services.GetRequiredService<IStartupManager>().IsStartupEnabled();
+            }
             Config = config;
             ServerAddress = config.ServerAddress;
             FillProcesses();
@@ -83,14 +84,19 @@ namespace FrpGUI.Avalonia.ViewModels
 
         partial void OnStartupChanged(bool value)
         {
-            if (value)
+            if (!OperatingSystem.IsBrowser())
             {
-                startupManager.EnableStartup("s");
-                Config.ShowTrayIcon = true;
-            }
-            else
-            {
-                startupManager.DisableStartup();
+                var startupManager = App.Services.GetRequiredService<IStartupManager>();
+
+                if (value)
+                {
+                    startupManager.EnableStartup("s");
+                    Config.ShowTrayIcon = true;
+                }
+                else
+                {
+                    startupManager.DisableStartup();
+                }
             }
         }
         [RelayCommand]
