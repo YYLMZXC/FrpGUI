@@ -86,7 +86,11 @@ public partial class App : Application
         var logger = new LocalLogger();
         builder.Services.AddSingleton<LoggerBase>(logger);
         builder.Services.AddSingleton<LocalLogger>(logger);
-        builder.Services.AddStartupManager();
+
+        if (!OperatingSystem.IsBrowser())
+        {
+            builder.Services.AddStartupManager();
+        }
 
         builder.Services.AddTransient<MainWindow>();
         builder.Services.AddTransient<MainView>();

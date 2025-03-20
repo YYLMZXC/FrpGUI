@@ -57,27 +57,43 @@
                         IsVisible="{Binding Config.RunningMode, Converter={StaticResource EqualConverter}, ConverterParameter=Service}"
                         LabelWidth="128">
 
-                        <ctrl:FormItem Label="服务器地址">
+                        <ctrl:FormItem Label="服务器地址：">
                             <TextBox
                                 Text="{Binding ServerAddress}"
                                 Watermark="服务器连接地址" />
                         </ctrl:FormItem>
-                        <ctrl:FormItem Label="连接密钥">
-                            <Grid ColumnDefinitions="*,8,*,8,Auto">
+                        <ctrl:FormItem Label="连接密钥：">
+                            <Grid ColumnDefinitions="*,8,Auto">
                                 <TextBox
-                                    Text="{Binding OldToken}"
-                                    Watermark="旧密码" />
-                                <TextBox
-                                    Grid.Column="2"
-                                    Text="{Binding NewToken}"
-                                    Watermark="新密码（不修改请留空）" />
+                                    Text="{Binding Token}"
+                                    Watermark="服务端的连接密码" />
                                 <Button
                                     Grid.Column="4"
-                                    Command="{Binding SetTokenCommand}"
-                                    Content="设置服务端密码" />
+                                    Content="修改密码">
+                                    <Button.Flyout>
+                                        <Flyout>
+                                            <Grid ColumnDefinitions="*,8,*,8,Auto">
+                                                <TextBox
+                                                    Width="128"
+                                                    Text="{Binding OldToken}"
+                                                    Watermark="旧密码" />
+                                                <TextBox
+                                                    Grid.Column="2"
+                                                    Width="128"
+                                                    Text="{Binding NewToken}"
+                                                    Watermark="新密码" />
+                                                <Button
+                                                    Grid.Column="4"
+                                                    Command="{Binding SetTokenCommand}"
+                                                    Content="确定" />
+                                            </Grid>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
                             </Grid>
                         </ctrl:FormItem>
                     </ctrl:StackFormItemGroup>
+
                     <ctrl:StackFormItemGroup
                         IsVisible="{Binding Config.RunningMode, Converter={StaticResource EqualConverter}, ConverterParameter=Singleton}"
                         LabelWidth="128">
@@ -90,7 +106,7 @@
                     </ctrl:StackFormItemGroup>
                     <Button
                         Command="{Binding RestartCommand}"
-                        Content="应用并重启程序" />
+                        Content="应用（需重启程序）" />
                 </StackPanel>
             </gb:GroupBox>
             <gb:GroupBox Header="托盘图标">

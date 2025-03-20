@@ -11,29 +11,45 @@ using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace FrpGUI.Avalonia;
 
-[ObservableObject]
-public partial class UIConfig : AppConfigBase
+public class UIConfig : AppConfigBase, INotifyPropertyChanged
 {
-    [ObservableProperty]
     private RunningMode runningMode;
 
-    [ObservableProperty]
     private bool showTrayIcon;
 
     public UIConfig() : base()
     {
     }
 
+    public event PropertyChangedEventHandler PropertyChanged;
+
     public static UIConfig DefaultConfig { get; set; }
 
     [JsonIgnore]
     public override string ConfigPath => Path.Combine(AppContext.BaseDirectory, "uiconfig.json");
 
+    public RunningMode RunningMode
+    {
+        get => runningMode;
+        set
+        {
+            runningMode = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RunningMode))); 
+        }
+    }
     public string ServerAddress { get; set; } = "http://localhost:5113";
 
     public string ServerToken { get; set; } = "";
 
-
+    public bool ShowTrayIcon
+    {
+        get => showTrayIcon;
+        set
+        {
+            showTrayIcon = value;
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ShowTrayIcon))); 
+        }
+    }
     protected override JsonSerializerContext JsonSerializerContext => FrpAvaloniaSourceGenerationContext.Default;
 
     public override void Save()

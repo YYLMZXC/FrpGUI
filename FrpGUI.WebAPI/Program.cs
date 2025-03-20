@@ -1,10 +1,11 @@
 using FrpGUI.Configs;
 using FrpGUI.Models;
 using FrpGUI.Services;
-using FrpGUI.WebAPI.Models;
 using FrpGUI.WebAPI.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting.WindowsServices;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
 
@@ -18,6 +19,14 @@ internal class Program
 
     private static void Main(string[] args)
     {
+        string dir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), nameof(FrpGUI), "logs");
+        Console.WriteLine($"日志保存位置：{dir}");
+
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()  // 控制台输出
+            .WriteTo.File(Path.Combine(dir,"log.txt"), rollingInterval: RollingInterval.Day)  // 按天滚动存储日志
+            .CreateLogger();
+
         WebApplicationBuilder builder = CreateBuilder(args);
 
         app = builder.Build();
@@ -75,7 +84,6 @@ internal class Program
             requirement[scheme] = new List<string>();
             p.AddSecurityRequirement(requirement);
         });
-        builder.Services.AddDbContext<FrpDbContext>(ServiceLifetime.Transient);
         builder.Services.AddSingleton<LoggerBase, Logger>();
         builder.Services.AddSingleton<FrpProcessCollection>();
         builder.Services.AddTransient<WebConfigService>();

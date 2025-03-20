@@ -78,7 +78,7 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter)
         {
-            return GetObjectAsync<List<LogEntity>>(LogsEndpoint, ("timeAfter", timeAfter.ToString("o")));
+            return GetObjectAsync<List<LogEntity>>(LogsEndpoint, ("timeAfter", timeAfter.ToString("yyyy-MM-ddTHH:mm:ss.fffffff")));
         }
 
         public Task<List<ProcessInfo>> GetSystemProcesses()

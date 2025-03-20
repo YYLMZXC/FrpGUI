@@ -9,13 +9,12 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using FzLib.Program.Startup;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FrpGUI.Avalonia.ViewModels
 {
     public partial class SettingViewModel : ViewModelBase
     {
-        private readonly IStartupManager startupManager;
-
         [ObservableProperty]
         private string newToken;
 
@@ -31,10 +30,14 @@ namespace FrpGUI.Avalonia.ViewModels
         [ObservableProperty]
         private bool startup;
 
-        public SettingViewModel(IDataProvider provider, UIConfig config,IStartupManager startupManager) : base(provider)
+        [ObservableProperty]
+        private string token;
+        public SettingViewModel(IDataProvider provider, UIConfig config) : base(provider)
         {
-            this.startupManager = startupManager;
-            startup = startupManager.IsStartupEnabled();
+            if (!OperatingSystem.IsBrowser())
+            {
+                startup = App.Services.GetRequiredService<IStartupManager>().IsStartupEnabled();
+            }
             Config = config;
             ServerAddress = config.ServerAddress;
             FillProcesses();
@@ -47,19 +50,8 @@ namespace FrpGUI.Avalonia.ViewModels
             };
         }
 
-        partial void OnStartupChanged(bool value)
-        {
-            if (value)
-            {
-                startupManager.EnableStartup("s");
-                Config.ShowTrayIcon = true;
-            }
-            else
-            {
-                startupManager.DisableStartup();
-            }
-        }
-        
+        public UIConfig Config { get; }
+
         private async void FillProcesses()
         {
             try
@@ -69,8 +61,6 @@ namespace FrpGUI.Avalonia.ViewModels
             catch (Exception ex)
             { }
         }
-
-        public UIConfig Config { get; }
 
         [RelayCommand]
         private async Task KillProcessAsync(ProcessInfo p)
@@ -92,13 +82,30 @@ namespace FrpGUI.Avalonia.ViewModels
             }
         }
 
+        partial void OnStartupChanged(bool value)
+        {
+            if (!OperatingSystem.IsBrowser())
+            {
+                var startupManager = App.Services.GetRequiredService<IStartupManager>();
+
+                if (value)
+                {
+                    startupManager.EnableStartup("s");
+                    Config.ShowTrayIcon = true;
+                }
+                else
+                {
+                    startupManager.DisableStartup();
+                }
+            }
+        }
         [RelayCommand]
         private async Task RestartAsync()
         {
             Config.ServerAddress = ServerAddress;
-            if (!string.IsNullOrEmpty(NewToken))
+            if (!string.IsNullOrEmpty(Token))
             {
-                Config.ServerToken = NewToken;
+                Config.ServerToken = Token;
             }
             Config.Save();
 
