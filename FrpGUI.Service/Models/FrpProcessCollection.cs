@@ -20,13 +20,27 @@ public class FrpProcessCollection(AppConfig config, LoggerBase logger) : Diction
 
     protected FrpConfigBase GetFrpConfig(string id)
     {
-        return config.FrpConfigs.FirstOrDefault(p => p.ID == id) ?? throw new ArgumentException($"找不到ID为{id}的配置");
+        var client = config.Clients.FirstOrDefault(p => p.ID == id);
+        if (client != null)
+        {
+            return client;
+        }
+        var server = config.Servers.FirstOrDefault(p => p.ID == id);
+        if (server != null)
+        {
+            return server;
+        }
+        throw new ArgumentException($"找不到ID为{id}的配置");
     }
 
     public IList<IFrpProcess> GetAll()
     {
         List<IFrpProcess> list = new List<IFrpProcess>();
-        foreach (var item in config.FrpConfigs)
+        foreach (var item in config.Servers)
+        {
+            list.Add(GetOrCreateProcess(item.ID));
+        }
+        foreach (var item in config.Clients)
         {
             list.Add(GetOrCreateProcess(item.ID));
         }
@@ -40,7 +54,16 @@ public class FrpProcessCollection(AppConfig config, LoggerBase logger) : Diction
         {
             await frp.StopAsync();
         }
-        config.FrpConfigs.Remove(frp.Config);
+        switch(frp.Config)
+        {
+            case ServerConfig s:
+                config.Servers.Remove(s);
+                break;
+            case ClientConfig c:
+                config.Clients.Remove(c);
+                break;
+                throw new ArgumentOutOfRangeException();
+        }
         Remove(frp.Config.ID);
         config.Save();
         return frp.Config;

@@ -1,4 +1,5 @@
-﻿using FrpGUI.Avalonia.ViewModels;
+﻿using FrpGUI.Avalonia.Models;
+using FrpGUI.Avalonia.ViewModels;
 using FrpGUI.Enums;
 using FrpGUI.Models;
 using System;
@@ -40,12 +41,12 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public Task<ClientConfig> AddClientAsync()
         {
-            return PostAsync<ClientConfig>(AddClientEndpoint);
+            return PostAsync(AddClientEndpoint,JContext.ClientConfig);
         }
 
         public Task<ServerConfig> AddServerAsync()
         {
-            return PostAsync<ServerConfig>(AddServerEndpoint);
+            return PostAsync(AddServerEndpoint,JContext.ServerConfig);
         }
 
         public void AddTimerTask(string name, Func<Task> task)
@@ -60,30 +61,37 @@ namespace FrpGUI.Avalonia.DataProviders
             return PostAsync($"{DeleteFrpConfigsEndpoint}/{id}");
         }
 
-        public Task<List<FrpConfigBase>> GetFrpConfigsAsync()
+        public Task<List<ServerConfig>> GetServerConfigsAsync()
         {
-            return GetObjectAsync<List<FrpConfigBase>>(FrpConfigsEndpoint);
+            return GetObjectAsync(FrpConfigsEndpoint, JContext.ListServerConfig);
+        }
+
+        public Task<List<ClientConfig>> GetClientConfigsAsync()
+        {
+            return GetObjectAsync(FrpConfigsEndpoint, JContext.ListClientConfig);
         }
 
         public Task<FrpStatusInfo> GetFrpStatusAsync(string id)
         {
-            return PostAsync<FrpStatusInfo>($"{FrpStatusEndpoint}/{id}");
+            return PostAsync($"{FrpStatusEndpoint}/{id}",JContext.FrpStatusInfo);
         }
 
         public async Task<IList<FrpStatusInfo>> GetFrpStatusesAsync()
         {
-            var result = await GetObjectAsync<IList<FrpStatusInfo>>(FrpStatusEndpoint);
+            var result = await GetObjectAsync(FrpStatusEndpoint,JContext.IListFrpStatusInfo);
             return result;//.Select(p => new FrpStatusInfo(p)).ToList();
         }
 
+        private FrpAvaloniaSourceGenerationContext JContext => FrpAvaloniaSourceGenerationContext.Default;
+
         public Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter)
         {
-            return GetObjectAsync<List<LogEntity>>(LogsEndpoint, ("timeAfter", timeAfter.ToString("yyyy-MM-ddTHH:mm:ss.fffffff")));
+            return GetObjectAsync(LogsEndpoint, JContext.ListLogEntity, ("timeAfter", timeAfter.ToString("yyyy-MM-ddTHH:mm:ss.fffffff")));
         }
 
         public Task<List<ProcessInfo>> GetSystemProcesses()
         {
-            return GetObjectAsync<List<ProcessInfo>>(SystemProcessesEndpoint);
+            return GetObjectAsync(SystemProcessesEndpoint, JContext.ListProcessInfo);
         }
 
         public Task KillProcess(int id)
@@ -93,7 +101,15 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public Task ModifyConfigAsync(FrpConfigBase config)
         {
-            return PostAsync(ModifyConfigEndpoint, config);
+            switch (config)
+            {
+                case ClientConfig c:
+                    return PostAsync(ModifyConfigEndpoint, config, JContext.ClientConfig);
+                case ServerConfig s:
+                    return PostAsync(ModifyConfigEndpoint, config, JContext.ServerConfig);
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         public Task RestartFrpAsync(string id)
@@ -118,7 +134,7 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public Task<TokenVerification> VerifyTokenAsync()
         {
-            return GetObjectAsync<TokenVerification>(TokenEndpoint);
+            return GetObjectAsync(TokenEndpoint, JContext.TokenVerification);
         }
 
         private async void StartTimer()

@@ -1,21 +1,33 @@
 ﻿using FrpGUI.Models;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 namespace FrpGUI.Configs
 {
     public class AppConfig : AppConfigBase
     {
         public override string ConfigPath => Path.Combine(AppContext.BaseDirectory, "config.json");
-        public List<FrpConfigBase> FrpConfigs { get; set; } = new List<FrpConfigBase>();
+        public List<ServerConfig> Servers { get; set; } = new List<ServerConfig>();
+        public List<ClientConfig> Clients { get; set; } = new List<ClientConfig>();
         public string Token { get; set; }
-        protected override JsonSerializerContext JsonSerializerContext => AppConfigSourceGenerationContext.Default;
+        private JsonTypeInfo<AppConfig> JsonTypeInfo => AppConfigSourceGenerationContext.Default.AppConfig;
 
+        public static AppConfig Get()
+        {
+            return Get(AppConfigSourceGenerationContext.Default.AppConfig);
+        }
+
+        public void Save()
+        {
+            Save(JsonTypeInfo);
+        }
         protected override void OnLoaded()
         {
-            if (FrpConfigs.Count == 0)
+            if (Servers.Count == 0 && Clients.Count == 0)
             {
-                FrpConfigs.Add(new ServerConfig());
-                FrpConfigs.Add(new ClientConfig());
+                Servers.Add(new ServerConfig());
+                Clients.Add(new ClientConfig());
             }
         }
     }

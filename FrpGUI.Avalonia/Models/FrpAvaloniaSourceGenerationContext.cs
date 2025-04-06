@@ -1,12 +1,16 @@
 ﻿using FrpGUI.Avalonia.ViewModels;
+using FrpGUI.Configs;
 using FrpGUI.Enums;
 using FrpGUI.Models;
 using System.Collections.Generic;
+using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Unicode;
 
 namespace FrpGUI.Avalonia.Models;
 
-[JsonSourceGenerationOptions(WriteIndented = true)]
+[JsonSourceGenerationOptions(WriteIndented = true, PropertyNameCaseInsensitive = true)]
 [JsonSerializable(typeof(FrpStatusInfo))]
 [JsonSerializable(typeof(FrpProcess))]
 [JsonSerializable(typeof(UIConfig))]
@@ -16,6 +20,8 @@ namespace FrpGUI.Avalonia.Models;
 [JsonSerializable(typeof(IList<FrpStatusInfo>))]
 [JsonSerializable(typeof(List<FrpProcess>))]
 [JsonSerializable(typeof(List<ProcessInfo>))]
+[JsonSerializable(typeof(List<ServerConfig>))]
+[JsonSerializable(typeof(List<ClientConfig>))]
 public partial class FrpAvaloniaSourceGenerationContext : JsonSerializerContext
 {
 }

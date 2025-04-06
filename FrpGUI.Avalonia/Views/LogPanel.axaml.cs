@@ -8,11 +8,8 @@ namespace FrpGUI.Avalonia.Views;
 
 public partial class LogPanel : UserControl
 {
-    private ScrollViewer lstScrollViewer;
-
     public LogPanel()
     {
-        DataContext = App.Services.GetRequiredService<LogViewModel>();
         InitializeComponent();
     }
 }

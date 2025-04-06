@@ -18,6 +18,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FzLib.Program.Startup;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FrpGUI.Avalonia;
 
@@ -49,7 +50,7 @@ public partial class App : Application
         }
 
         var builder = Host.CreateApplicationBuilder();
-        var uiconfig = AppConfigBase.Get<UIConfig>();
+        var uiconfig = UIConfig.Get();
 
         //浏览器一定是使用服务模式而不是单机模式
         if (OperatingSystem.IsBrowser())
@@ -66,7 +67,7 @@ public partial class App : Application
                 builder.Services.AddSingleton<IDataProvider, LocalDataProvider>();
                 builder.Services.AddHostedService<LocalAppLifetimeService>();
                 builder.Services.AddSingleton<FrpProcessCollection>();
-                builder.Services.AddSingleton(AppConfigBase.Get<AppConfig>());
+                builder.Services.AddSingleton(AppConfig.Get());
                 break;
 
             case RunningMode.Service:
@@ -84,21 +85,15 @@ public partial class App : Application
         }
 
         builder.Services.AddTransient<MainWindow>();
-        builder.Services.AddTransient<MainView>();
-        builder.Services.AddTransient<MainViewModel>();
 
         builder.Services.AddTransient<ClientPanel>();
         builder.Services.AddTransient<ServerPanel>();
         builder.Services.AddTransient<FrpConfigViewModel>();
 
-        builder.Services.AddTransient<RuleDialog>();
-        builder.Services.AddTransient<RuleViewModel>();
-
-        builder.Services.AddTransient<SettingsDialog>();
-        builder.Services.AddTransient<SettingViewModel>();
-
-        builder.Services.AddTransient<LogPanel>();
-        builder.Services.AddTransient<LogViewModel>();
+        AddViewAndViewModel<MainView, MainViewModel>(builder);
+        AddViewAndViewModel<RuleDialog, RuleViewModel>(builder);
+        AddViewAndViewModel<SettingsDialog, SettingViewModel>(builder);
+        AddViewAndViewModel<LogPanel, LogViewModel>(builder);
 
         builder.Services.AddSingleton(uiconfig);
 
@@ -144,6 +139,28 @@ public partial class App : Application
     {
         TrayIcon.GetIcons(this)[0].Dispose();
         await AppHost.StopAsync();
+    }
+    public static void AddViewAndViewModel<TView, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(HostApplicationBuilder builder, ServiceLifetime lifetime = ServiceLifetime.Singleton)
+     where TView : Control, new()
+     where TViewModel : class
+    {
+        switch (lifetime)
+        {
+            case ServiceLifetime.Singleton:
+                builder.Services.AddSingleton<TViewModel>();
+                builder.Services.AddSingleton(s => new TView()
+                { DataContext = s.GetRequiredService<TViewModel>() });
+
+                break;
+            case ServiceLifetime.Transient:
+                builder.Services.AddTransient<TViewModel>();
+                builder.Services.AddTransient(s => new TView()
+                { DataContext = s.GetRequiredService<TViewModel>() });
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
+        }
     }
 
     private async void ExitMenuItem_Click(object sender, EventArgs e)

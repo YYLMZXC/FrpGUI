@@ -13,7 +13,7 @@ class Program
          => AppBuilder.Configure<App>()
              .LogToTrace()
              .UsePlatformDetect();
-             //.UseDesktopWebView();
+    //.UseDesktopWebView();
 
     [STAThread]
     public static void Main(string[] args)
@@ -30,7 +30,7 @@ class Program
         try
         {
 #endif
-            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
 #if !DEBUG
         }
         catch (Exception ex)
@@ -46,11 +46,11 @@ class Program
 
     private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
     {
-        Log.Fatal("未捕获的AppDomain异常", e.ExceptionObject as Exception);
+        Log.Fatal(e.ExceptionObject as Exception, "未捕获的AppDomain异常");
     }
 
     private static void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
     {
-        Log.Fatal("未捕获的TaskScheduler异常", e.Exception);
+        Log.Fatal(e.Exception, "未捕获的TaskScheduler异常");
     }
 }
