@@ -24,7 +24,7 @@
                     <Setter.Value>
                         <ContextMenu>
                             <MenuItem
-                                Command="{Binding $parent[UserControl].DataContext.CopyLogCommand}"
+                                Command="{Binding $parent[UserControl].((vm:LogViewModel)DataContext).CopyLogCommand}"
                                 CommandParameter="{Binding .}"
                                 Header="复制" />
                         </ContextMenu>

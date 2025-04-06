@@ -8,7 +8,7 @@
     <OutputPath>$(Temp)\$(SolutionName)\$(Configuration)\$(AssemblyName)</OutputPath>
     <BaseIntermediateOutputPath>$(Temp)\$(SolutionName)\obj\$(Configuration)\$(AssemblyName)</BaseIntermediateOutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PublishAot>true</PublishAot>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,7 +17,7 @@
     <EmbeddedResource Remove="obj\**" />
     <None Remove="obj\**" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
@@ -46,13 +46,13 @@
       <HintPath>..\..\FzLib\Publish\Release\net8.0\FzLib.Avalonia.dll</HintPath>
     </Reference>
   </ItemGroup>
-  
+
   <ItemGroup>
     <ProjectReference Include="..\FrpGUI.Core\FrpGUI.Core.csproj" />
     <ProjectReference Include="..\FrpGUI.Service\FrpGUI.Service.csproj" />
   </ItemGroup>
 
-  
+
   <ItemGroup>
     <AvaloniaResource Update="Assets\icon.ico">
       <CopyToOutputDirectory></CopyToOutputDirectory>

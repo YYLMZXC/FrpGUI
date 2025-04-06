@@ -3,7 +3,7 @@
     发布 FrpGUI 应用程序到不同平台。
 
 .DESCRIPTION
-    此脚本用于发布 FrpGUI 应用程序到 Windows、Linux、macOS 和浏览器平台。
+    此脚本用于发布 FrpGUI 应用程序到 Windows、Linux、macOS 和浏览器平台，并根据当前平台自动启用AOT编译。
 
 .PARAMETER w
     发布到 Windows 平台。
@@ -86,6 +86,10 @@ try {
         throw "未安装.NET SDK"
     }
     
+    # 获取当前平台
+    $currentPlatform = if ($IsWindows) { "win-x64" } elseif ($IsLinux) { "linux-x64" } elseif ($IsMacOS) { "osx-x64" } else { "unknown" }
+
+    
     function Publish-UI {
         param (
             [string]$runtime,
@@ -93,8 +97,11 @@ try {
         )
 
         Write-Output "正在发布客户端：$runtime"
+        
+        # 如果目标平台与当前平台匹配，则启用AOT
+        $aotFlag = if ($runtime -eq $currentPlatform) { "/p:PublishAot=true" } else { "/p:PublishAot=false" }
 
-        dotnet publish FrpGUI.Avalonia.Desktop -r $runtime -c Release -o $outputDirectory --self-contained true #/p:PublishSingleFile=true 
+        dotnet publish FrpGUI.Avalonia.Desktop -r $runtime -c Release -o $outputDirectory --self-contained true $aotFlag #/p:PublishSingleFile=true 
 
         $platform = switch ($runtime) {
             "win-x64" { "windows_amd64" }
@@ -120,8 +127,11 @@ try {
         )
 
         Write-Output "正在发布服务：$runtime"
+        
+        # 如果目标平台与当前平台匹配，则启用AOT
+        $aotFlag = if ($runtime -eq $currentPlatform) { "/p:PublishAot=true" } else { "/p:PublishAot=false" }
 
-        dotnet publish FrpGUI.WebAPI -r $runtime -c Release -o $outputDirectory --self-contained true
+        dotnet publish FrpGUI.WebAPI -r $runtime -c Release -o $outputDirectory --self-contained true $aotFlag
 
         $platform = switch ($runtime) {
             "win-x64" { "windows_amd64" }
@@ -133,6 +143,8 @@ try {
     }
 
     Clear-Host
+    
+     Write-Output "当前平台：$currentPlatform"
 
     # 如果Publish目录存在，则删除
     if (Test-Path "Publish") {
@@ -157,7 +169,7 @@ try {
         Move-Item "Publish/browser/wwwroot/*" "Publish/browser"
         Copy-Item "FrpGUI.Avalonia.Browser/web.config" "Publish/browser"
         Copy-Item "FrpGUI.Avalonia.Browser/uiconfig.json" "Publish/browser"
-        Remove-Item "Publish/browser/obj" -r
+#        Remove-Item "Publish/browser/obj" -r
         Remove-Item "Publish/browser/wwwroot" -r
     }
 

@@ -14,14 +14,14 @@
     d:DesignWidth="800"
     mc:Ignorable="d">
 
-    <Panel Classes.Show="{Binding $parent[UserControl].IsActive}">
+    <Panel Classes.Show="{Binding $parent[v:ProgressRingOverlay].IsActive}">
         <Panel.Transitions>
-          <Transitions>
-            <DoubleTransition
-                Easing="CubicEaseInOut"
-                Property="Opacity"
-                Duration="0:0:0.5" />
-          </Transitions>
+            <Transitions>
+                <DoubleTransition
+                    Easing="CubicEaseInOut"
+                    Property="Opacity"
+                    Duration="0:0:0.5" />
+            </Transitions>
         </Panel.Transitions>
         <Panel.Styles>
             <Style Selector="Panel">

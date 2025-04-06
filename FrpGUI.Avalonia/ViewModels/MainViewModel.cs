@@ -27,9 +27,9 @@ namespace FrpGUI.Avalonia.ViewModels;
 public partial class MainViewModel : ViewModelBase
 {
     private readonly UIConfig config;
+    private readonly LocalLogger logger;
     private readonly IDataProvider provider;
     private readonly IServiceProvider services;
-    private readonly LocalLogger logger;
     [ObservableProperty]
     private bool activeProgressRingOverlay = true;
 
@@ -182,6 +182,11 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    private void CurrentViewFrp_StatusChanged(object sender, EventArgs e)
+    {
+        UpdateMainContent();
+    }
+
     [RelayCommand]
     private async Task DeleteConfigAsync(IFrpProcess fp)
     {
@@ -251,6 +256,24 @@ public partial class MainViewModel : ViewModelBase
             await ShowErrorAsync(ex, "启动失败");
         }
     }
+    private string GetDashboardUrl(FrpConfigBase frpConfig, bool includeAuth)
+    {
+        try
+        {
+            string user = frpConfig.DashBoardUsername;
+            string pswd = frpConfig.DashBoardPassword;
+            string ip = config.RunningMode == RunningMode.Singleton ?
+                "localhost"
+                : new Uri(config.ServerAddress).Host;
+            ushort port = frpConfig.DashBoardPort;
+            return includeAuth ? $"http://{user}:{pswd}@{ip}:{port}" : $"http://{ip}:{port}";
+        }
+        catch (Exception ex)
+        {
+            throw new Exception("尝试获取仪表盘地址失败");
+        }
+    }
+
     private async void InitializeDataAndStartTimer()
     {
         await CheckNetworkAndToken();
@@ -275,6 +298,20 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand]
+    private void NavigationCompleted()
+    {
+        //用户名和密码通过Url形式传给frp后端，这样虽然可以登陆，但是数据请求不到。
+        //所以在加载完成后，再访问一下不带用户名密码的网址。
+        //此时认证信息会自动保留，所以能够变相实现自动登录。
+        //直接设置网址好像会认为是同一个网址导致不跳转，所以先访问一下about:blank。
+        if (WebViewUrl.OriginalString.Contains('@'))
+        {
+            WebViewUrl = new Uri("about:blank");
+            WebViewUrl = new Uri(GetDashboardUrl(CurrentFrpProcess.Config, false));
+        }
+    }
+
     partial void OnCurrentFrpProcessChanged(IFrpProcess oldValue, IFrpProcess newValue)
     {
         CurrentPanelViewModel.LoadConfig(newValue);
@@ -284,12 +321,6 @@ public partial class MainViewModel : ViewModelBase
         }
         UpdateMainContent();
     }
-
-    private void CurrentViewFrp_StatusChanged(object sender, EventArgs e)
-    {
-        UpdateMainContent();
-    }
-
     partial void OnCurrentFrpProcessChanging(IFrpProcess oldValue, IFrpProcess newValue)
     {
         if (oldValue != null && FrpProcesses.Contains(oldValue))
@@ -323,6 +354,7 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     private async Task StartAsync()
     {
+        await Task.Delay(1000);
         try
         {
             await DataProvider.ModifyConfigAsync(CurrentFrpProcess.Config);
@@ -347,24 +379,6 @@ public partial class MainViewModel : ViewModelBase
         catch (Exception ex)
         {
             await ShowErrorAsync(ex, "停止失败");
-        }
-    }
-
-    private string GetDashboardUrl(FrpConfigBase frpConfig, bool includeAuth)
-    {
-        try
-        {
-            string user = frpConfig.DashBoardUsername;
-            string pswd = frpConfig.DashBoardPassword;
-            string ip = config.RunningMode == RunningMode.Singleton ?
-                "localhost"
-                : new Uri(config.ServerAddress).Host;
-            ushort port = frpConfig.DashBoardPort;
-            return includeAuth ? $"http://{user}:{pswd}@{ip}:{port}" : $"http://{ip}:{port}";
-        }
-        catch (Exception ex)
-        {
-            throw new Exception("尝试获取仪表盘地址失败");
         }
     }
     private void UpdateMainContent()
@@ -403,21 +417,6 @@ public partial class MainViewModel : ViewModelBase
             logger.Error("更新主界面内容失败", null, ex);
         }
     }
-
-    [RelayCommand]
-    private void NavigationCompleted()
-    {
-        //用户名和密码通过Url形式传给frp后端，这样虽然可以登陆，但是数据请求不到。
-        //所以在加载完成后，再访问一下不带用户名密码的网址。
-        //此时认证信息会自动保留，所以能够变相实现自动登录。
-        //直接设置网址好像会认为是同一个网址导致不跳转，所以先访问一下about:blank。
-        if (WebViewUrl.OriginalString.Contains('@'))
-        {
-            WebViewUrl = new Uri("about:blank");
-            WebViewUrl = new Uri(GetDashboardUrl(CurrentFrpProcess.Config, false));
-        }
-    }
-
     private async Task UpdateStatusAsync(bool force)
     {
         if (!force && (DateTime.Now - lastUpdateStatusTime).TotalSeconds < 1

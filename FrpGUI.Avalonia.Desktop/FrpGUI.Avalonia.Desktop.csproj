@@ -15,6 +15,7 @@
     <ApplicationIcon>../FrpGUI.Avalonia/Assets/icon.ico</ApplicationIcon>
     <Version>$(AppVersion)</Version>
     <PublishAot>true</PublishAot>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>

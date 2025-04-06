@@ -15,6 +15,7 @@
     Title="客户端规则"
     MinWidth="384"
     Padding="4"
+    x:DataType="vm:RuleViewModel"
     CloseButtonContent="取消"
     CloseButtonEnable="True"
     PrimaryButtonContent="保存"

@@ -11,6 +11,7 @@
     xmlns:vm="using:FrpGUI.Avalonia.ViewModels"
     d:DesignHeight="450"
     d:DesignWidth="800"
+    x:DataType="vm:MainViewModel"
     Background="Transparent"
     mc:Ignorable="d">
     <UserControl.Resources>
@@ -32,17 +33,15 @@
                 <Setter Property="Background" Value="Transparent" />
                 <Setter Property="Width" Value="64" />
                 <Setter Property="Height" Value="32" />
+                <Style Selector="^:disabled /template/ ContentPresenter#PART_ContentPresenter">
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="Opacity" Value="0.8" />
+                </Style>
             </Style>
+
             <Style Selector="PathIcon">
                 <Setter Property="Width" Value="10" />
                 <Setter Property="Height" Value="10" />
-            </Style>
-
-            <Style Selector="Button[IsEnabled=false]  ContentPresenter#PART_ContentPresenter">
-                <Setter Property="Background" Value="Transparent" />
-            </Style>
-            <Style Selector="Button[IsEnabled=false] PathIcon">
-                <Setter Property="Opacity" Value="0.5" />
             </Style>
         </Grid.Styles>
         <StackPanel

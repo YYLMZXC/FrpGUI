@@ -45,11 +45,11 @@
                             <Setter.Value>
                                 <ContextMenu>
                                     <MenuItem
-                                        Command="{Binding $parent[UserControl].DataContext.DeleteConfigCommand}"
+                                        Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).DeleteConfigCommand}"
                                         CommandParameter="{Binding .}"
                                         Header="删除" />
                                     <MenuItem
-                                        Command="{Binding $parent[UserControl].DataContext.CreateCopyCommand}"
+                                        Command="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).CreateCopyCommand}"
                                         CommandParameter="{Binding .}"
                                         Header="建立副本" />
                                 </ContextMenu>
@@ -116,7 +116,7 @@
             Grid.Row="1"
             Grid.Column="2"
             Margin="8"
-            Content="{Binding $parent[UserControl].DataContext.CurrentMainContent}"
+            Content="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).CurrentMainContent}"
             DataContext="{Binding CurrentPanelViewModel}" />
 
         <!--<ContentControl
@@ -126,7 +126,9 @@
             IsVisible="{Binding ShowWebview}">
             <ContentControl.Content>
                 <OnPlatform Default="{x:Null}">
-                    --><!--  在Linux和MacOS上均测试失败  --><!--
+        -->
+        <!--  在Linux和MacOS上均测试失败  -->
+        <!--
                     <OnPlatform.Windows>
                         <WebView
                             x:Name="web"
