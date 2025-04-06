@@ -16,7 +16,8 @@ namespace FrpGUI.Avalonia.DataProviders
         private const string AddClientEndpoint = "Config/FrpConfigs/Add/Client";
         private const string AddServerEndpoint = "Config/FrpConfigs/Add/Server";
         private const string DeleteFrpConfigsEndpoint = "Config/FrpConfigs/Delete";
-        private const string FrpConfigsEndpoint = "Config/FrpConfigs";
+        private const string ServerConfigsEndpoint = "Config/Servers";
+        private const string ClientConfigsEndpoint = "Config/Clients";
         private const string FrpStatusEndpoint = "Process/Status";
         private const string KillProcessEndpoint = "Process/Kill";
         private const string LogsEndpoint = "Log/List";
@@ -41,12 +42,12 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public Task<ClientConfig> AddClientAsync()
         {
-            return PostAsync(AddClientEndpoint,JContext.ClientConfig);
+            return PostAsync(AddClientEndpoint, JContext.ClientConfig);
         }
 
         public Task<ServerConfig> AddServerAsync()
         {
-            return PostAsync(AddServerEndpoint,JContext.ServerConfig);
+            return PostAsync(AddServerEndpoint, JContext.ServerConfig);
         }
 
         public void AddTimerTask(string name, Func<Task> task)
@@ -63,22 +64,22 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public Task<List<ServerConfig>> GetServerConfigsAsync()
         {
-            return GetObjectAsync(FrpConfigsEndpoint, JContext.ListServerConfig);
+            return GetObjectAsync(ServerConfigsEndpoint, JContext.ListServerConfig);
         }
 
         public Task<List<ClientConfig>> GetClientConfigsAsync()
         {
-            return GetObjectAsync(FrpConfigsEndpoint, JContext.ListClientConfig);
+            return GetObjectAsync(ClientConfigsEndpoint, JContext.ListClientConfig);
         }
 
         public Task<FrpStatusInfo> GetFrpStatusAsync(string id)
         {
-            return PostAsync($"{FrpStatusEndpoint}/{id}",JContext.FrpStatusInfo);
+            return PostAsync($"{FrpStatusEndpoint}/{id}", JContext.FrpStatusInfo);
         }
 
         public async Task<IList<FrpStatusInfo>> GetFrpStatusesAsync()
         {
-            var result = await GetObjectAsync(FrpStatusEndpoint,JContext.IListFrpStatusInfo);
+            var result = await GetObjectAsync(FrpStatusEndpoint, JContext.IListFrpStatusInfo);
             return result;//.Select(p => new FrpStatusInfo(p)).ToList();
         }
 

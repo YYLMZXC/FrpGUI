@@ -10,6 +10,7 @@ public partial class LogPanel : UserControl
 {
     public LogPanel()
     {
+        DataContext = App.Services.GetRequiredService<LogViewModel>();
         InitializeComponent();
     }
 }

@@ -24,6 +24,8 @@ namespace FrpGUI.Avalonia;
 
 public partial class App : Application
 {
+    private MainWindow mainWindow;
+
     public App()
     {
     }
@@ -31,6 +33,29 @@ public partial class App : Application
     public static IServiceProvider Services { get; private set; }
 
     public IHost AppHost { get; private set; }
+
+    public static void AddViewAndViewModel<TView, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(HostApplicationBuilder builder, ServiceLifetime lifetime = ServiceLifetime.Singleton)
+     where TView : Control, new()
+     where TViewModel : class
+    {
+        switch (lifetime)
+        {
+            case ServiceLifetime.Singleton:
+                builder.Services.AddSingleton<TViewModel>();
+                builder.Services.AddSingleton(s => new TView()
+                { DataContext = s.GetRequiredService<TViewModel>() });
+
+                break;
+            case ServiceLifetime.Transient:
+                builder.Services.AddTransient<TViewModel>();
+                builder.Services.AddTransient(s => new TView()
+                { DataContext = s.GetRequiredService<TViewModel>() });
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
+        }
+    }
 
     public override void Initialize()
     {
@@ -93,7 +118,8 @@ public partial class App : Application
         AddViewAndViewModel<MainView, MainViewModel>(builder);
         AddViewAndViewModel<RuleDialog, RuleViewModel>(builder);
         AddViewAndViewModel<SettingsDialog, SettingViewModel>(builder);
-        AddViewAndViewModel<LogPanel, LogViewModel>(builder);
+        builder.Services.AddTransient<LogPanel>();
+        builder.Services.AddTransient<LogViewModel>();
 
         builder.Services.AddSingleton(uiconfig);
 
@@ -102,9 +128,6 @@ public partial class App : Application
         Services = AppHost.Services;
         AppHost.Start();
     }
-
-    private MainWindow mainWindow;
-
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
@@ -140,29 +163,6 @@ public partial class App : Application
         TrayIcon.GetIcons(this)[0].Dispose();
         await AppHost.StopAsync();
     }
-    public static void AddViewAndViewModel<TView, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(HostApplicationBuilder builder, ServiceLifetime lifetime = ServiceLifetime.Singleton)
-     where TView : Control, new()
-     where TViewModel : class
-    {
-        switch (lifetime)
-        {
-            case ServiceLifetime.Singleton:
-                builder.Services.AddSingleton<TViewModel>();
-                builder.Services.AddSingleton(s => new TView()
-                { DataContext = s.GetRequiredService<TViewModel>() });
-
-                break;
-            case ServiceLifetime.Transient:
-                builder.Services.AddTransient<TViewModel>();
-                builder.Services.AddTransient(s => new TView()
-                { DataContext = s.GetRequiredService<TViewModel>() });
-
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
-        }
-    }
-
     private async void ExitMenuItem_Click(object sender, EventArgs e)
     {
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)

@@ -131,7 +131,7 @@ try {
         # 如果目标平台与当前平台匹配，则启用AOT
         $aotFlag = if ($runtime -eq $currentPlatform) { "/p:PublishAot=true" } else { "/p:PublishAot=false" }
 
-        dotnet publish FrpGUI.WebAPI -r $runtime -c Release -o $outputDirectory --self-contained true $aotFlag
+        dotnet publish FrpGUI.WebAPI -r $runtime -c Release -o $outputDirectory --self-contained true #$aotFlag
 
         $platform = switch ($runtime) {
             "win-x64" { "windows_amd64" }

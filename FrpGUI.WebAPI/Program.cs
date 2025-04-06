@@ -55,7 +55,6 @@ internal class Program
             .AddJsonOptions(o =>
         {
             o.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
-            o.JsonSerializerOptions.Converters.Add(new FrpConfigJsonConverter());
         });
 
         builder.Services.AddTransient<FrpGUIActionFilter>();
@@ -105,7 +104,7 @@ internal class Program
         });
         Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
-        AppConfig config = AppConfigBase.Get<AppConfig>();
+        AppConfig config = AppConfig.Get();
         builder.Services.AddSingleton(config);
 
         return builder;

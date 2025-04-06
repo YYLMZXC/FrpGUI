@@ -27,7 +27,7 @@ public partial class MainView : UserControl
         base.OnLoaded(e);
         if (TopLevel.GetTopLevel(this) is Window)
         {
-            new WindowDragHelper(controlBar).EnableDrag();
+            //new WindowDragHelper(controlBar).EnableDrag();
             new WindowDragHelper(tbkLogo).EnableDrag();
         }
     }

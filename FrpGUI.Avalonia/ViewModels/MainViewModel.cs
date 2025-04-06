@@ -21,6 +21,7 @@ using System.Threading.Tasks;
 using static FzLib.Avalonia.Messages.CommonDialogMessage;
 using static FzLib.Program.Runtime.SimplePipe;
 using FrpGUI.Configs;
+using Serilog;
 
 namespace FrpGUI.Avalonia.ViewModels;
 
@@ -28,7 +29,6 @@ public partial class MainViewModel : ViewModelBase
 {
     private readonly UIConfig config;
     private readonly LocalLogger logger;
-    private readonly IDataProvider provider;
     private readonly IServiceProvider services;
     [ObservableProperty]
     private bool activeProgressRingOverlay = true;
@@ -54,6 +54,7 @@ public partial class MainViewModel : ViewModelBase
 
     [ObservableProperty]
     private Uri webViewUrl;
+
     public MainViewModel(IDataProvider provider,
         UIConfig config,
         IServiceProvider services,
@@ -354,7 +355,6 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     private async Task StartAsync()
     {
-        await Task.Delay(1000);
         try
         {
             await DataProvider.ModifyConfigAsync(CurrentFrpProcess.Config);

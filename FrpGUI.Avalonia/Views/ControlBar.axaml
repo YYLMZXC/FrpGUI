@@ -44,6 +44,10 @@
                 <Setter Property="Height" Value="10" />
             </Style>
         </Grid.Styles>
+        <Panel
+            x:Name="thumb"
+            Grid.Column="1"
+            Background="Transparent" />
         <StackPanel
             IsVisible="{Binding CurrentFrpProcess, Converter={StaticResource NotNullConverter}}"
             Orientation="Horizontal">
