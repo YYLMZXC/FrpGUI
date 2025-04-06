@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using AvaloniaWebView;
 using CommunityToolkit.Mvvm.Messaging;
 using FrpGUI.Avalonia.ViewModels;
 

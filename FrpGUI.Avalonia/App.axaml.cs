@@ -4,7 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using AvaloniaWebView;
 using FrpGUI.Avalonia.DataProviders;
 using FrpGUI.Avalonia.ViewModels;
 using FrpGUI.Avalonia.Views;
@@ -35,14 +34,6 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-
-        //Windows端加载内置浏览器
-        if (OperatingSystem.IsWindows())
-        {
-            //由于浏览器总在最上层，因此需要使用Window形式的对话框
-            DialogExtension.ContainerType = DialogContainerType.WindowPreferred;
-            AvaloniaWebViewBuilder.Initialize(default);
-        }
 
         //Windows上使用微软雅黑
         if (OperatingSystem.IsWindows())

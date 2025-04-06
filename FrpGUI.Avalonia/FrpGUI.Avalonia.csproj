@@ -8,6 +8,7 @@
     <OutputPath>$(Temp)\$(SolutionName)\$(Configuration)\$(AssemblyName)</OutputPath>
     <BaseIntermediateOutputPath>$(Temp)\$(SolutionName)\obj\$(Configuration)\$(AssemblyName)</BaseIntermediateOutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PublishAot>true</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,7 +35,7 @@
     <PackageReference Include="FzLib.Avalonia" Condition="'$(Configuration)' == 'Release' or '$(FzLocal)' == 'F'" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageReference Include="WebView.Avalonia" />
+    <!--<PackageReference Include="WebView.Avalonia" />-->
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug' and '$(FzLocal)' == 'T'">

@@ -14,6 +14,7 @@
     <BaseIntermediateOutputPath>$(Temp)\$(SolutionName)\obj\$(Configuration)\$(AssemblyName)</BaseIntermediateOutputPath>
     <ApplicationIcon>../FrpGUI.Avalonia/Assets/icon.ico</ApplicationIcon>
     <Version>$(AppVersion)</Version>
+    <PublishAot>true</PublishAot>
   </PropertyGroup>
 
   <ItemGroup>
@@ -24,17 +25,11 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia.Desktop" />
-    <PackageReference Include="log4net" />
-    <PackageReference Include="WebView.Avalonia.Desktop" />
+    <!--<PackageReference Include="WebView.Avalonia.Desktop" />-->
+    <PackageReference Include="Serilog.Sinks.File" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FrpGUI.Avalonia\FrpGUI.Avalonia.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="log4net.config">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

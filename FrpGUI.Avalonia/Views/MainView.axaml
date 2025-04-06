@@ -119,14 +119,14 @@
             Content="{Binding $parent[UserControl].DataContext.CurrentMainContent}"
             DataContext="{Binding CurrentPanelViewModel}" />
 
-        <ContentControl
+        <!--<ContentControl
             x:Name="webContainer"
             Grid.Row="1"
             Grid.Column="2"
             IsVisible="{Binding ShowWebview}">
             <ContentControl.Content>
                 <OnPlatform Default="{x:Null}">
-                    <!--  在Linux和MacOS上均测试失败  -->
+                    --><!--  在Linux和MacOS上均测试失败  --><!--
                     <OnPlatform.Windows>
                         <WebView
                             x:Name="web"
@@ -142,7 +142,7 @@
                     </OnPlatform.Windows>
                 </OnPlatform>
             </ContentControl.Content>
-        </ContentControl>
+        </ContentControl>-->
         <v:LogPanel
             Grid.Row="1"
             Grid.Column="4" />
