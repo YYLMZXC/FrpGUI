@@ -77,7 +77,7 @@ public partial class LogViewModel : ViewModelBase
         SendMessage(new GetClipboardMessage()).Clipboard.SetTextAsync(log.Message);
     }
 
-    private async void StartTimer()
+    private void StartTimer()
     {
         if (DataProvider is WebDataProvider webDataProvider)
         {

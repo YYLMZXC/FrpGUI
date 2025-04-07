@@ -132,7 +132,7 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            BindingPlugins.DataValidators.RemoveAt(0);
+            //BindingPlugins.DataValidators.RemoveAt(0);
             mainWindow = Services.GetRequiredService<MainWindow>();
             var startup = desktop.Args is { Length: > 0 } && desktop.Args[0] == "s";
             if (!startup)

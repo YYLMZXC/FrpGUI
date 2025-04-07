@@ -14,4 +14,8 @@
     <!--在非Windows上开发，设置临时文件夹目录-->
     <!--<Temp>/home/username/temp</Temp>-->
   </PropertyGroup>
+
+  <PropertyGroup>
+    <NoWarn>CS0168,CS0169;MSB3539</NoWarn>
+  </PropertyGroup>
 </Project>
