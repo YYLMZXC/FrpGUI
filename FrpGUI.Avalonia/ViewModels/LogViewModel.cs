@@ -96,5 +96,10 @@ public partial class LogViewModel : ViewModelBase
             });
         }
         logger.NewLog += (s, e) => AddLog(e.Log);
+        logger.SaveLogs = false;
+        foreach (var log in logger.GetSavedLogs())
+        {
+            AddLog(log);
+        }
     }
 }

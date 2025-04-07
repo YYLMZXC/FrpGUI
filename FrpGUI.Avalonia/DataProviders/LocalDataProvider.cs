@@ -2,8 +2,6 @@
 using FrpGUI.Configs;
 using FrpGUI.Enums;
 using FrpGUI.Models;
-
-using Mapster;
 using System;
 using System.Collections.Generic;
 using System.Linq;

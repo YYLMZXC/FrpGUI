@@ -54,5 +54,20 @@ namespace FrpGUI.Models
 
             return str.ToString();
         }
+
+        public override void Adapt(FrpConfigBase config)
+        {
+            base.Adapt(config); // 先复制基类属性
+            if (config is not ServerConfig serverConfig)
+            {
+                throw new ArgumentException("必须为" + nameof(ServerConfig));
+            }
+            // 复制 ServerConfig 特有的属性
+            serverConfig.HttpPort = HttpPort;
+            serverConfig.HttpsPort = HttpsPort;
+            serverConfig.MaxPoolCount = MaxPoolCount;
+            serverConfig.Port = Port;
+            serverConfig.TlsOnly = TlsOnly;
+        }
     }
 }
