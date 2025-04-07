@@ -88,7 +88,7 @@ namespace FrpGUI.Avalonia.DataProviders
             {
                 throw new ArgumentException("提供的配置与已有配置类型不同");
             }
-            configs.Adapt(p.Config);
+            config.Adapt(p.Config);
             configs.Save();
             return Task.CompletedTask;
         }

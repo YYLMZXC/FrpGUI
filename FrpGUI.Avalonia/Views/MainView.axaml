@@ -111,40 +111,26 @@
             x:Name="controlBar"
             Grid.Column="2"
             Grid.ColumnSpan="99" />
-        <ContentControl
+        <v:ClientPanel
+            Grid.Row="1"
+            Grid.Column="2"
+            Margin="8"
+            DataContext="{Binding CurrentPanelViewModel}"
+            IsVisible="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).IsClientPanelVisible}" />
+        <v:ServerPanel
+            Grid.Row="1"
+            Grid.Column="2"
+            Margin="8"
+            DataContext="{Binding CurrentPanelViewModel}"
+            IsVisible="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).IsServerPanelVisible}" />
+        <!--<ContentControl
             x:Name="mainPanel"
             Grid.Row="1"
             Grid.Column="2"
             Margin="8"
             Content="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).CurrentMainContent}"
-            DataContext="{Binding CurrentPanelViewModel}" />
+            DataContext="{Binding CurrentPanelViewModel}" />-->
 
-        <!--<ContentControl
-            x:Name="webContainer"
-            Grid.Row="1"
-            Grid.Column="2"
-            IsVisible="{Binding ShowWebview}">
-            <ContentControl.Content>
-                <OnPlatform Default="{x:Null}">
-        -->
-        <!--  在Linux和MacOS上均测试失败  -->
-        <!--
-                    <OnPlatform.Windows>
-                        <WebView
-                            x:Name="web"
-                            Url="{Binding WebViewUrl}">
-                            <Interaction.Behaviors>
-                                <EventTriggerBehavior
-                                    EventName="NavigationCompleted"
-                                    SourceObject="web">
-                                    <InvokeCommandAction Command="{Binding NavigationCompletedCommand}" />
-                                </EventTriggerBehavior>
-                            </Interaction.Behaviors>
-                        </WebView>
-                    </OnPlatform.Windows>
-                </OnPlatform>
-            </ContentControl.Content>
-        </ContentControl>-->
         <v:LogPanel
             Grid.Row="1"
             Grid.Column="4" />
