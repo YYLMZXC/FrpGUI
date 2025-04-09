@@ -24,4 +24,13 @@ namespace FrpGUI.Avalonia.Models;
 [JsonSerializable(typeof(List<ClientConfig>))]
 public partial class FrpAvaloniaSourceGenerationContext : JsonSerializerContext
 {
+    public static FrpAvaloniaSourceGenerationContext Get()
+    {
+        return new FrpAvaloniaSourceGenerationContext(new JsonSerializerOptions()
+        {
+            WriteIndented = true,
+            PropertyNameCaseInsensitive = true,
+            Converters = { new FrpConfigJsonConverter() }
+        });
+    }
 }

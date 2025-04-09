@@ -55,6 +55,7 @@ internal class Program
             .AddJsonOptions(o =>
         {
             o.JsonSerializerOptions.Encoder = JavaScriptEncoder.Create(UnicodeRanges.All);
+            o.JsonSerializerOptions.Converters.Add(new FrpConfigJsonConverter());
         });
 
         builder.Services.AddTransient<FrpGUIActionFilter>();

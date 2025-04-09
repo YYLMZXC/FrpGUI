@@ -34,7 +34,7 @@ public partial class App : Application
 
     public IHost AppHost { get; private set; }
 
-    public static void AddViewAndViewModel<TView, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(HostApplicationBuilder builder, ServiceLifetime lifetime = ServiceLifetime.Singleton)
+    public static void AddViewAndViewModel<TView, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(HostApplicationBuilder builder, ServiceLifetime lifetime = ServiceLifetime.Transient)
      where TView : Control, new()
      where TViewModel : class
     {

@@ -51,16 +51,12 @@ namespace FrpGUI.Avalonia.DataProviders
             return await JsonSerializer.DeserializeAsync<T>(responseStream, jsonTypeInfo);
         }
 
-        public async Task PostAsync<TData>(string endpoint, object data = null, JsonTypeInfo<TData> jsonTypeInfo = null)
+        public async Task PostAsync<TData>(string endpoint, object data, JsonTypeInfo<TData> jsonTypeInfo)
         {
             WriteAuthorizationHeader();
             ArgumentNullException.ThrowIfNullOrWhiteSpace(endpoint);
             ArgumentNullException.ThrowIfNull(data);
             ArgumentNullException.ThrowIfNull(jsonTypeInfo);
-            if (data != null && jsonTypeInfo == null)
-            {
-                throw new ArgumentNullException(nameof(jsonTypeInfo));
-            }
             var jsonContent = data == null ? null : new StringContent(JsonSerializer.Serialize(data, jsonTypeInfo), Encoding.UTF8, "application/json");
             var response = await httpClient.PostAsync($"{BaseApiUrl}/{endpoint}", jsonContent);
             await ProcessError(response);

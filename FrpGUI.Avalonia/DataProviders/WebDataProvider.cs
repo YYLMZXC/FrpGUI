@@ -83,7 +83,7 @@ namespace FrpGUI.Avalonia.DataProviders
             return result;//.Select(p => new FrpStatusInfo(p)).ToList();
         }
 
-        private FrpAvaloniaSourceGenerationContext JContext => FrpAvaloniaSourceGenerationContext.Default;
+        private FrpAvaloniaSourceGenerationContext JContext => FrpAvaloniaSourceGenerationContext.Get();
 
         public Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter)
         {
@@ -120,7 +120,7 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public Task SetTokenAsync(string oldToken, string newToken)
         {
-            return PostAsync<TokenVerification>($"{TokenEndpoint}?oldToken={WebUtility.UrlEncode(oldToken)}&newToken={WebUtility.UrlEncode(newToken)}");
+            return PostAsync($"{TokenEndpoint}?oldToken={WebUtility.UrlEncode(oldToken ?? "")}&newToken={WebUtility.UrlEncode(newToken)}", JContext.TokenVerification);
         }
 
         public Task StartFrpAsync(string id)

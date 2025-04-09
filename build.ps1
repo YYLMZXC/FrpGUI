@@ -20,9 +20,6 @@
 .PARAMETER s
     设置此标志以创建服务器的发布版本。
 
-.PARAMETER b
-    设置此标志以发布浏览器版本。
-
 .EXAMPLE
     .\YourScript.ps1 -w -c -s
     发布到 Windows 平台，创建客户端和服务器的发布版本。
@@ -49,7 +46,6 @@ param(
 
     [switch]$c, #Clients
     [switch]$s, #Servers
-    [switch]$b #Browser
 )
 
 # 如果 $w, $l, $m 都为 false，则全部设为 true
@@ -59,11 +55,10 @@ if (-not ($w -or $l -or $m)) {
     $m = $true
 }
 
-# 如果 $c, $s, $b 都为 false，则全部设为 true
-if (-not ($c -or $s -or $b)) {
+# 如果 $c, $s 都为 false，则全部设为 true
+if (-not ($c -or $s)) {
     $c = $true
     $s = $true
-    $b = $true
 }
 
 if ($w) { Write-Host "发布Windows" }
@@ -71,7 +66,6 @@ if ($l) { Write-Host "发布Linux" }
 if ($m) { Write-Host "发布MacOS" }
 if ($c) { Write-Host "发布客户端" }
 if ($s) { Write-Host "发布服务器端" }
-if ($b) { Write-Host "发布浏览器端" }
 pause
 
 
@@ -163,19 +157,6 @@ try {
         if ($m) { Publish-Service -runtime "osx-x64" -outputDirectory "Publish/server-macos-x64" }
     }
     
-    if ($b) {
-        Write-Output "正在发布：Browser"
-        dotnet publish FrpGUI.Avalonia.Browser -r browser-wasm -c Release -o "Publish/browser" --self-contained true
-        Move-Item "Publish/browser/wwwroot/*" "Publish/browser"
-        Copy-Item "FrpGUI.Avalonia.Browser/web.config" "Publish/browser"
-        Copy-Item "FrpGUI.Avalonia.Browser/uiconfig.json" "Publish/browser"
-#        Remove-Item "Publish/browser/obj" -r
-        Remove-Item "Publish/browser/wwwroot" -r
-    }
-
-    Write-Output "正在清理"
-    Remove-Item FrpGUI*/bin/Release -Recurse
-
     Write-Output "操作完成"
 
     Invoke-Item Publish
