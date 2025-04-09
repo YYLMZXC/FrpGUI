@@ -18,7 +18,7 @@ namespace FrpGUI.Avalonia.DataProviders
 
         Task<FrpStatusInfo> GetFrpStatusAsync(string id);
 
-        Task<IList<FrpStatusInfo>> GetFrpStatusesAsync();
+        Task<List<FrpStatusInfo>> GetFrpStatusesAsync();
 
         Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter);
         Task<List<ServerConfig>> GetServerConfigsAsync();

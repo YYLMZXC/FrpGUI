@@ -17,3 +17,6 @@ export function reload() {
 export function getCurrentUrl() {
     return window.location.href
 }
+export function openUrl() {
+    return window.open("url", "_blank")
+}

@@ -77,9 +77,9 @@ namespace FrpGUI.Avalonia.DataProviders
             return PostAsync($"{FrpStatusEndpoint}/{id}", JContext.FrpStatusInfo);
         }
 
-        public async Task<IList<FrpStatusInfo>> GetFrpStatusesAsync()
+        public async Task<List<FrpStatusInfo>> GetFrpStatusesAsync()
         {
-            var result = await GetObjectAsync(FrpStatusEndpoint, JContext.IListFrpStatusInfo);
+            var result = await GetObjectAsync(FrpStatusEndpoint, JContext.ListFrpStatusInfo);
             return result;//.Select(p => new FrpStatusInfo(p)).ToList();
         }
 

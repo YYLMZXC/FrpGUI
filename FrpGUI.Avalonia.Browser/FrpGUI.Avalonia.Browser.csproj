@@ -7,10 +7,17 @@
     <BaseOutputPath>../Generation/bin</BaseOutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <WasmEnableLinker>false</WasmEnableLinker>
+    <PublishTrimmed>false</PublishTrimmed>
+    <IlcGenerateCompleteTypeMetadata>true</IlcGenerateCompleteTypeMetadata>
     <Version>$(AppVersion)</Version>
     <OutputPath>$(Temp)\$(SolutionName)\$(Configuration)\$(AssemblyName)</OutputPath>
     <BaseIntermediateOutputPath>$(Temp)\$(SolutionName)\obj\$(Configuration)\$(AssemblyName)</BaseIntermediateOutputPath>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <TrimmerRootAssembly Include="FrpGUI.Avalonia" />
+  </ItemGroup>
 
   <ItemGroup>
     <AvaloniaXaml Remove="obj\**" />

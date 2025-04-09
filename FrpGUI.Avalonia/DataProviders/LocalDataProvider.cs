@@ -53,9 +53,9 @@ namespace FrpGUI.Avalonia.DataProviders
             return Task.FromResult(new FrpStatusInfo(processes.GetOrCreateProcess(id)));
         }
 
-        public Task<IList<FrpStatusInfo>> GetFrpStatusesAsync()
+        public Task<List<FrpStatusInfo>> GetFrpStatusesAsync()
         {
-            return Task.FromResult(processes.GetAll().Select(p => new FrpStatusInfo(p)).ToList() as IList<FrpStatusInfo>);
+            return Task.FromResult(processes.GetAll().Select(p => new FrpStatusInfo(p)).ToList());
         }
 
         public Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter)

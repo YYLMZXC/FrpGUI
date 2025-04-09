@@ -22,6 +22,7 @@ using static FzLib.Avalonia.Messages.CommonDialogMessage;
 using static FzLib.Program.Runtime.SimplePipe;
 using FrpGUI.Configs;
 using Serilog;
+using System.Diagnostics;
 
 namespace FrpGUI.Avalonia.ViewModels;
 
@@ -107,6 +108,32 @@ public partial class MainViewModel : ViewModelBase
         catch (Exception ex)
         {
             await ShowErrorAsync(ex, "新增客户端失败");
+        }
+    }
+
+    [RelayCommand]
+    private void BrowseAdmin()
+    {
+        var frpConfig = CurrentFrpProcess.Config;
+        string user = frpConfig.DashBoardUsername;
+        string pswd = frpConfig.DashBoardPassword;
+        string ip = config.RunningMode == RunningMode.Singleton ?
+            "localhost"
+            : new Uri(config.ServerAddress).Host;
+        ushort port = frpConfig.DashBoardPort;
+        string url = $"http://{ip}:{port}";
+        //string url = $"http://{user}:{pswd}@{ip}:{port}";
+        if (OperatingSystem.IsBrowser())
+        {
+            JsInterop.OpenUrl(url);
+        }
+        else
+        {
+            Process.Start(new ProcessStartInfo
+            {
+                FileName = url,
+                UseShellExecute = true
+            });
         }
     }
 
