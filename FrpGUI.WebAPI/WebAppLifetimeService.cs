@@ -14,7 +14,7 @@ public class WebAppLifetimeService(AppConfig config, LoggerBase logger, FrpProce
     {
         if (serverConfigService.ServerOnly())
         {
-            Config.Clients.Clear();
+            Config.Configs.RemoveAll(p => p is ClientConfig);
         }
         return base.StartAsync(cancellationToken);
     }

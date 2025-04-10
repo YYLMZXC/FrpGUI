@@ -18,6 +18,7 @@ namespace FrpGUI.Avalonia.Models;
 [JsonSerializable(typeof(TokenVerification))]
 [JsonSerializable(typeof(List<LogEntity>))]
 [JsonSerializable(typeof(List<FrpStatusInfo>))]
+[JsonSerializable(typeof(List<FrpConfigBase>))]
 [JsonSerializable(typeof(List<FrpProcess>))]
 [JsonSerializable(typeof(List<ProcessInfo>))]
 [JsonSerializable(typeof(List<ServerConfig>))]

@@ -24,7 +24,7 @@ namespace FrpGUI.Avalonia.DataProviders
         public Task<ClientConfig> AddClientAsync()
         {
             ClientConfig client = new ClientConfig();
-            configs.Clients.Add(client);
+            configs.Configs.Add(client);
             configs.Save();
             return Task.FromResult(client);
         }
@@ -32,7 +32,7 @@ namespace FrpGUI.Avalonia.DataProviders
         public Task<ServerConfig> AddServerAsync()
         {
             ServerConfig server = new ServerConfig();
-            configs.Servers.Add(server);
+            configs.Configs.Add(server);
             configs.Save();
 
             return Task.FromResult(server);
@@ -43,9 +43,9 @@ namespace FrpGUI.Avalonia.DataProviders
             return processes.RemoveFrpAsync(id);
         }
 
-        public Task<List<ClientConfig>> GetClientConfigsAsync()
+        public Task<List<FrpConfigBase>> GetConfigsAsync()
         {
-            return Task.FromResult(configs.Clients);
+            return Task.FromResult(configs.Configs);
         }
 
         public Task<FrpStatusInfo> GetFrpStatusAsync(string id)
@@ -61,11 +61,6 @@ namespace FrpGUI.Avalonia.DataProviders
         public Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter)
         {
             throw new NotSupportedException();
-        }
-
-        public Task<List<ServerConfig>> GetServerConfigsAsync()
-        {
-            return Task.FromResult(configs.Servers);
         }
 
         public Task<List<ProcessInfo>> GetSystemProcesses()

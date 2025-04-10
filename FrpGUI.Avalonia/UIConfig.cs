@@ -51,7 +51,7 @@ public class UIConfig : AppConfigBase, INotifyPropertyChanged
         }
     }
 
-    private static JsonTypeInfo<UIConfig> JsonTypeInfo => FrpAvaloniaSourceGenerationContext.Default.UIConfig;
+    private static JsonTypeInfo<UIConfig> JsonTypeInfo { get; } = FrpAvaloniaSourceGenerationContext.Get().UIConfig;
 
     public static UIConfig Get()
     {
