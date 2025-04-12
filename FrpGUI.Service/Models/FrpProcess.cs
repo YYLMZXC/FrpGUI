@@ -54,7 +54,7 @@ public class FrpProcess : IFrpProcess
         ChangeStatus(ProcessStatus.Running);
     }
 
-    public Task StartAsync()
+    public async Task StartAsync()
     {
         if (ProcessStatus == ProcessStatus.Running)
         {
@@ -63,7 +63,7 @@ public class FrpProcess : IFrpProcess
         ChangeStatus(ProcessStatus.Busy);
         try
         {
-            Process.Start();
+            await Task.Run(Process.Start);
             ChangeStatus(ProcessStatus.Running);
         }
         catch (Exception ex)
@@ -71,7 +71,6 @@ public class FrpProcess : IFrpProcess
             ChangeStatus(ProcessStatus.Stopped);
             throw;
         }
-        return Task.CompletedTask;
     }
 
     public async Task StopAsync()

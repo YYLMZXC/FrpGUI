@@ -6,6 +6,7 @@
     xmlns:ctrl="using:FzLib.Avalonia.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="using:System"
     xmlns:v="clr-namespace:FrpGUI.Avalonia.Views"
     xmlns:vm="using:FrpGUI.Avalonia.ViewModels"
     d:DesignHeight="450"
@@ -30,25 +31,35 @@
                 </ctrl:WrapFormItemGroup>
             </ctrl:FormItem>
             <ctrl:FormItem Label="端口号">
-                <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).Port}" />
+                <NumericUpDown
+                    Classes="PortInput"
+                    Value="{Binding Frp.((cfg:ServerConfig)Config).Port}" />
             </ctrl:FormItem>
             <ctrl:FormItem Label="连接密钥">
                 <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).Token}" />
             </ctrl:FormItem>
             <ctrl:FormItem Label="HTTP端口">
-                <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).HttpPort}" />
+              <NumericUpDown
+                  Classes="PortInput"
+                  Value="{Binding Frp.((cfg:ServerConfig)Config).HttpPort}" />
             </ctrl:FormItem>
             <ctrl:FormItem Label="HTTPS端口">
-                <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).HttpsPort}" />
+                <NumericUpDown
+                    Classes="PortInput"
+                    Value="{Binding Frp.((cfg:ServerConfig)Config).HttpsPort}" />
             </ctrl:FormItem>
             <ctrl:FormItem Label="最大连接数">
-                <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).MaxPoolCount}" />
+              <NumericUpDown
+                  Classes="PortInput"
+                  Value="{Binding Frp.((cfg:ServerConfig)Config).MaxPoolCount}" />
             </ctrl:FormItem>
             <ctrl:FormItem Label="控制面板地址">
                 <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardAddress}" />
             </ctrl:FormItem>
             <ctrl:FormItem Label="控制面板端口号">
-                <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardPort}" />
+              <NumericUpDown
+                  Classes="PortInput"
+                  Value="{Binding Frp.((cfg:ServerConfig)Config).DashBoardPort}" />
             </ctrl:FormItem>
             <ctrl:FormItem Label="控制面板用户名">
                 <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardUsername}" />

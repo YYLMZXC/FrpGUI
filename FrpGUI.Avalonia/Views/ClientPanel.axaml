@@ -50,20 +50,26 @@
                     <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).ServerAddress}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="端口号">
-                    <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).ServerPort}" />
+                  <NumericUpDown
+                      Classes="PortInput"
+                      Value="{Binding Frp.((cfg:ClientConfig)Config).ServerPort}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="连接密钥">
                     <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).Token}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="预连接数量">
-                    <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).PoolCount}" />
+                  <NumericUpDown
+                      Classes="PortInput"
+                      Value="{Binding Frp.((cfg:ClientConfig)Config).PoolCount}" />
                 </ctrl:FormItem>
 
                 <ctrl:FormItem Label="管理面板地址">
                     <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardAddress}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="管理面板端口">
-                    <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardPort}" />
+                  <NumericUpDown
+                      Classes="PortInput"
+                      Value="{Binding Frp.((cfg:ClientConfig)Config).DashBoardPort}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="管理面板用户名">
                     <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardUsername}" />
