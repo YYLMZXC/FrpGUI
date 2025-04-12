@@ -11,7 +11,7 @@ namespace FrpGUI.Configs
     {
         private static readonly string ConfigPathS = Path.Combine(AppContext.BaseDirectory, "config.json");
         public override string ConfigPath { get; } = ConfigPathS;
-        public List<FrpConfigBase> Configs { get; set; } = new List<FrpConfigBase>();
+        public List<FrpConfigBase> FrpConfigs { get; set; } = new List<FrpConfigBase>();
         public string Token { get; set; }
         private JsonTypeInfo<AppConfig> JsonTypeInfo { get; } = AppConfigSourceGenerationContext.Get().AppConfig;
 
@@ -28,10 +28,10 @@ namespace FrpGUI.Configs
 
         protected override void OnLoaded()
         {
-            if (Configs.Count == 0)
+            if (FrpConfigs.Count == 0)
             {
-                Configs.Add(new ServerConfig());
-                Configs.Add(new ClientConfig());
+                FrpConfigs.Add(new ServerConfig());
+                FrpConfigs.Add(new ClientConfig());
             }
         }
 

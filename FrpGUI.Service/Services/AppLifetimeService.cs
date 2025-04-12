@@ -21,7 +21,7 @@ namespace FrpGUI.Services
                     Logger.Info($"自动启动：{fp.Config.Name}");
                     try
                     {
-                        await Processes.GetOrCreateProcess(fp.Config.ID).StartAsync();
+                        await Processes.GetOrCreateProcess(fp.Config.ID).StartAsync().ConfigureAwait(false);
                     }
                     catch (Exception ex)
                     {

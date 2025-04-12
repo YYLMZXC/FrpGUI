@@ -24,7 +24,7 @@ namespace FrpGUI.Avalonia.DataProviders
         public Task<ClientConfig> AddClientAsync()
         {
             ClientConfig client = new ClientConfig();
-            configs.Configs.Add(client);
+            configs.FrpConfigs.Add(client);
             configs.Save();
             return Task.FromResult(client);
         }
@@ -32,7 +32,7 @@ namespace FrpGUI.Avalonia.DataProviders
         public Task<ServerConfig> AddServerAsync()
         {
             ServerConfig server = new ServerConfig();
-            configs.Configs.Add(server);
+            configs.FrpConfigs.Add(server);
             configs.Save();
 
             return Task.FromResult(server);
@@ -45,7 +45,7 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public Task<List<FrpConfigBase>> GetConfigsAsync()
         {
-            return Task.FromResult(configs.Configs);
+            return Task.FromResult(configs.FrpConfigs);
         }
 
         public Task<FrpStatusInfo> GetFrpStatusAsync(string id)

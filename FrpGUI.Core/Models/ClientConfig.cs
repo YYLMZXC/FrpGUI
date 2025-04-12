@@ -25,7 +25,7 @@ namespace FrpGUI.Models
 
         public ClientConfig()
         {
-            Name = "客户端1";
+            Name = "客户端";
         }
 
         public override char Type { get; } = 'c';

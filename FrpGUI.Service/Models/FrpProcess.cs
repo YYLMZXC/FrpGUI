@@ -63,7 +63,7 @@ public class FrpProcess : IFrpProcess
         ChangeStatus(ProcessStatus.Busy);
         try
         {
-            await Task.Run(Process.Start);
+            await Task.Run(Process.Start).ConfigureAwait(false);
             ChangeStatus(ProcessStatus.Running);
         }
         catch (Exception ex)

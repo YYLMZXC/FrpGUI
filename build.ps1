@@ -31,11 +31,6 @@
 .EXAMPLE
     .\YourScript.ps1 -m -c
     发布到 macOS 平台，仅创建客户端的发布版本。
-
-.EXAMPLE
-    .\YourScript.ps1 -b
-    发布到浏览器平台。
-
 #>
 
 param(
@@ -45,7 +40,7 @@ param(
     [switch]$m, #MacOS
 
     [switch]$c, #Clients
-    [switch]$s, #Servers
+    [switch]$s #Servers
 )
 
 # 如果 $w, $l, $m 都为 false，则全部设为 true

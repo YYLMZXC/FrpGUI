@@ -28,7 +28,7 @@ public class ConfigController : FrpControllerBase
         webConfigService.ThrowIfServerOnly();
         logger.Info($"指令：新增客户端");
         ClientConfig clientConfig = new ClientConfig();
-        configs.Configs.Add(clientConfig);
+        configs.FrpConfigs.Add(clientConfig);
         configs.Save();
         return clientConfig;
     }
@@ -38,7 +38,7 @@ public class ConfigController : FrpControllerBase
     {
         logger.Info($"指令：新增服务端");
         ServerConfig serverConfig = new ServerConfig();
-        configs.Configs.Add(serverConfig);
+        configs.FrpConfigs.Add(serverConfig);
         configs.Save();
         return serverConfig;
     }
@@ -53,7 +53,7 @@ public class ConfigController : FrpControllerBase
     [HttpGet("Configs")]
     public List<FrpConfigBase> GetConfigList()
     {
-        return configs.Configs;
+        return configs.FrpConfigs;
     }
 
     [HttpPost("FrpConfigs/Modify")]
