@@ -4,7 +4,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
-using AvaloniaWebView;
 using FrpGUI.Avalonia.DataProviders;
 using FrpGUI.Avalonia.ViewModels;
 using FrpGUI.Avalonia.Views;
@@ -19,11 +18,14 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using FzLib.Program.Startup;
+using System.Diagnostics.CodeAnalysis;
 
 namespace FrpGUI.Avalonia;
 
 public partial class App : Application
 {
+    private MainWindow mainWindow;
+
     public App()
     {
     }
@@ -32,17 +34,32 @@ public partial class App : Application
 
     public IHost AppHost { get; private set; }
 
+    public static void AddViewAndViewModel<TView, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(HostApplicationBuilder builder, ServiceLifetime lifetime = ServiceLifetime.Transient)
+     where TView : Control, new()
+     where TViewModel : class
+    {
+        switch (lifetime)
+        {
+            case ServiceLifetime.Singleton:
+                builder.Services.AddSingleton<TViewModel>();
+                builder.Services.AddSingleton(s => new TView()
+                { DataContext = s.GetRequiredService<TViewModel>() });
+
+                break;
+            case ServiceLifetime.Transient:
+                builder.Services.AddTransient<TViewModel>();
+                builder.Services.AddTransient(s => new TView()
+                { DataContext = s.GetRequiredService<TViewModel>() });
+
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, null);
+        }
+    }
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-
-        //Windows端加载内置浏览器
-        if (OperatingSystem.IsWindows())
-        {
-            //由于浏览器总在最上层，因此需要使用Window形式的对话框
-            DialogExtension.ContainerType = DialogContainerType.WindowPreferred;
-            AvaloniaWebViewBuilder.Initialize(default);
-        }
 
         //Windows上使用微软雅黑
         if (OperatingSystem.IsWindows())
@@ -58,7 +75,7 @@ public partial class App : Application
         }
 
         var builder = Host.CreateApplicationBuilder();
-        var uiconfig = AppConfigBase.Get<UIConfig>();
+        var uiconfig = UIConfig.Get();
 
         //浏览器一定是使用服务模式而不是单机模式
         if (OperatingSystem.IsBrowser())
@@ -75,7 +92,7 @@ public partial class App : Application
                 builder.Services.AddSingleton<IDataProvider, LocalDataProvider>();
                 builder.Services.AddHostedService<LocalAppLifetimeService>();
                 builder.Services.AddSingleton<FrpProcessCollection>();
-                builder.Services.AddSingleton(AppConfigBase.Get<AppConfig>());
+                builder.Services.AddSingleton(AppConfig.Get());
                 break;
 
             case RunningMode.Service:
@@ -93,19 +110,14 @@ public partial class App : Application
         }
 
         builder.Services.AddTransient<MainWindow>();
-        builder.Services.AddTransient<MainView>();
-        builder.Services.AddTransient<MainViewModel>();
 
         builder.Services.AddTransient<ClientPanel>();
         builder.Services.AddTransient<ServerPanel>();
         builder.Services.AddTransient<FrpConfigViewModel>();
 
-        builder.Services.AddTransient<RuleDialog>();
-        builder.Services.AddTransient<RuleViewModel>();
-
-        builder.Services.AddTransient<SettingsDialog>();
-        builder.Services.AddTransient<SettingViewModel>();
-
+        AddViewAndViewModel<MainView, MainViewModel>(builder);
+        AddViewAndViewModel<RuleDialog, RuleViewModel>(builder);
+        AddViewAndViewModel<SettingsDialog, SettingViewModel>(builder);
         builder.Services.AddTransient<LogPanel>();
         builder.Services.AddTransient<LogViewModel>();
 
@@ -116,14 +128,11 @@ public partial class App : Application
         Services = AppHost.Services;
         AppHost.Start();
     }
-
-    private MainWindow mainWindow;
-
     public override void OnFrameworkInitializationCompleted()
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            BindingPlugins.DataValidators.RemoveAt(0);
+            //BindingPlugins.DataValidators.RemoveAt(0);
             mainWindow = Services.GetRequiredService<MainWindow>();
             var startup = desktop.Args is { Length: > 0 } && desktop.Args[0] == "s";
             if (!startup)
@@ -154,7 +163,6 @@ public partial class App : Application
         TrayIcon.GetIcons(this)[0].Dispose();
         await AppHost.StopAsync();
     }
-
     private async void ExitMenuItem_Click(object sender, EventArgs e)
     {
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)

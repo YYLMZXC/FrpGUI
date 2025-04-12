@@ -20,7 +20,8 @@ public class FrpProcessCollection(AppConfig config, LoggerBase logger) : Diction
 
     protected FrpConfigBase GetFrpConfig(string id)
     {
-        return config.FrpConfigs.FirstOrDefault(p => p.ID == id) ?? throw new ArgumentException($"找不到ID为{id}的配置");
+        var client = config.FrpConfigs.FirstOrDefault(p => p.ID == id);
+        return client ?? throw new ArgumentException($"找不到ID为{id}的配置");
     }
 
     public IList<IFrpProcess> GetAll()

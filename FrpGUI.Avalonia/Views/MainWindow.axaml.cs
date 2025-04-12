@@ -5,6 +5,7 @@ using FrpGUI.Enums;
 using FrpGUI.Models;
 using FzLib.Avalonia.Controls;
 using FzLib.Avalonia.Dialogs;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Diagnostics;
 using System.Linq;
@@ -14,13 +15,13 @@ namespace FrpGUI.Avalonia.Views;
 
 public partial class MainWindow : ExtendedWindow
 {
-    private readonly UIConfig config;
+    private readonly UIConfig config=App.Services.GetRequiredService<UIConfig>();
 
-    private readonly FrpProcessCollection processes;
+    private readonly FrpProcessCollection processes= App.Services.GetService<FrpProcessCollection>();
 
     private bool forceClose = false;
 
-    public MainWindow(UIConfig config, FrpProcessCollection processes = null)
+    public MainWindow()
     {
         InitializeComponent();
         if (OperatingSystem.IsWindows())
@@ -28,8 +29,6 @@ public partial class MainWindow : ExtendedWindow
             grid.Children.Add(new WindowButtons());
         }
 
-        this.config = config;
-        this.processes = processes;
     }
 
     public async Task TryCloseAsync()

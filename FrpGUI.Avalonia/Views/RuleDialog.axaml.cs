@@ -7,15 +7,19 @@ namespace FrpGUI.Avalonia.Views;
 
 public partial class RuleDialog : DialogHost
 {
-    public RuleDialog(RuleViewModel viewModel)
+    public RuleDialog()
     {
-        DataContext = viewModel;
         InitializeComponent();
     }
 
     public void SetRule(Rule rule)
     {
         (DataContext as RuleViewModel).Rule = rule.Clone() as Rule;
+    }
+
+    protected override void OnCloseButtonClick()
+    {
+        Close();
     }
 
     protected override void OnPrimaryButtonClick()
@@ -25,10 +29,5 @@ public partial class RuleDialog : DialogHost
         {
             Close(vm.Rule);
         }
-    }
-
-    protected override void OnCloseButtonClick()
-    {
-        Close();
     }
 }

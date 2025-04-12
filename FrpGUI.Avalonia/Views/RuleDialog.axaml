@@ -15,6 +15,7 @@
     Title="客户端规则"
     MinWidth="384"
     Padding="4"
+    x:DataType="vm:RuleViewModel"
     CloseButtonContent="取消"
     CloseButtonEnable="True"
     PrimaryButtonContent="保存"
@@ -43,12 +44,15 @@
                     <TextBox Text="{Binding Rule.LocalAddress}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="本地端口">
-                    <TextBox Text="{Binding Rule.LocalPort}" />
+                    <NumericUpDown
+                        Classes="PortInput"
+                        Value="{Binding Rule.LocalPort}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="远程端口">
-                    <TextBox
+                    <NumericUpDown
+                        Classes="PortInput"
                         IsEnabled="{Binding Rule.Type, ConverterParameter=RemotePort, Converter={StaticResource RuleParameterEnableConverter}}"
-                        Text="{Binding Rule.RemotePort}" />
+                        Value="{Binding Rule.RemotePort}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="域名">
                     <TextBox

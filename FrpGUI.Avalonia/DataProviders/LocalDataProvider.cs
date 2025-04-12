@@ -2,8 +2,6 @@
 using FrpGUI.Configs;
 using FrpGUI.Enums;
 using FrpGUI.Models;
-
-using Mapster;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +43,7 @@ namespace FrpGUI.Avalonia.DataProviders
             return processes.RemoveFrpAsync(id);
         }
 
-        public Task<List<FrpConfigBase>> GetFrpConfigsAsync()
+        public Task<List<FrpConfigBase>> GetConfigsAsync()
         {
             return Task.FromResult(configs.FrpConfigs);
         }
@@ -55,9 +53,9 @@ namespace FrpGUI.Avalonia.DataProviders
             return Task.FromResult(new FrpStatusInfo(processes.GetOrCreateProcess(id)));
         }
 
-        public Task<IList<FrpStatusInfo>> GetFrpStatusesAsync()
+        public Task<List<FrpStatusInfo>> GetFrpStatusesAsync()
         {
-            return Task.FromResult(processes.GetAll().Select(p => new FrpStatusInfo(p)).ToList() as IList<FrpStatusInfo>);
+            return Task.FromResult(processes.GetAll().Select(p => new FrpStatusInfo(p)).ToList());
         }
 
         public Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter)
@@ -83,7 +81,7 @@ namespace FrpGUI.Avalonia.DataProviders
             {
                 throw new ArgumentException("提供的配置与已有配置类型不同");
             }
-            configs.Adapt(p.Config);
+            config.Adapt(p.Config);
             configs.Save();
             return Task.CompletedTask;
         }

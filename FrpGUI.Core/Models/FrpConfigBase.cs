@@ -11,6 +11,9 @@ namespace FrpGUI.Models
         private bool autoStart;
 
         [ObservableProperty]
+        private string dashBoardAddress = "localhost";
+
+        [ObservableProperty]
         private string dashBoardPassword = "admin";
 
         [ObservableProperty]
@@ -20,13 +23,11 @@ namespace FrpGUI.Models
         private string dashBoardUsername = "admin";
 
         [ObservableProperty]
-        private string dashBoardAddress = "localhost";
-
-        [ObservableProperty]
         private string name;
 
         [ObservableProperty]
         private string token = "";
+
         public FrpConfigBase()
         {
         }
@@ -42,5 +43,17 @@ namespace FrpGUI.Models
         }
 
         public abstract string ToToml();
+
+        public virtual void Adapt(FrpConfigBase config)
+        {
+            config.AutoStart = AutoStart;
+            config.DashBoardPassword = DashBoardPassword;
+            config.DashBoardPort = DashBoardPort;
+            config.DashBoardUsername = DashBoardUsername;
+            config.DashBoardAddress = DashBoardAddress;
+            config.Name = Name;
+            config.Token = Token;
+            config.ID = ID;
+        }
     }
 }

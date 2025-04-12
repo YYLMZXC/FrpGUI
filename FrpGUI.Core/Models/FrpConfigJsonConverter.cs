@@ -1,8 +1,7 @@
-﻿using FrpGUI.Models;
+﻿using System.Text.Json.Serialization;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
-namespace FrpGUI.Configs
+namespace FrpGUI.Models
 {
     public class FrpConfigJsonConverter : JsonConverter<FrpConfigBase>
     {

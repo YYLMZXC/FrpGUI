@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Interactivity;
-using AvaloniaWebView;
 using CommunityToolkit.Mvvm.Messaging;
 using FrpGUI.Avalonia.ViewModels;
 
@@ -28,7 +27,7 @@ public partial class MainView : UserControl
         base.OnLoaded(e);
         if (TopLevel.GetTopLevel(this) is Window)
         {
-            new WindowDragHelper(controlBar).EnableDrag();
+            //new WindowDragHelper(controlBar).EnableDrag();
             new WindowDragHelper(tbkLogo).EnableDrag();
         }
     }

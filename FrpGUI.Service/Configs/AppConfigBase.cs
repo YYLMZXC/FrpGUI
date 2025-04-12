@@ -1,6 +1,6 @@
-﻿using FrpGUI.Utils;
-using System.Text.Json;
+﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.Json.Serialization.Metadata;
 
 namespace FrpGUI.Configs
 {
@@ -8,9 +8,7 @@ namespace FrpGUI.Configs
     {
         public abstract string ConfigPath { get; }
 
-        protected abstract JsonSerializerContext JsonSerializerContext { get; }
-
-        public static T Get<T>() where T : AppConfigBase, new()
+        public static T Get<T>(JsonTypeInfo<T> jsonTypeInfo) where T : AppConfigBase, new()
         {
             T config = new T();
 
@@ -19,7 +17,7 @@ namespace FrpGUI.Configs
             {
                 try
                 {
-                    config = config.GetImpl<T>();
+                    config = config.GetImpl<T>(jsonTypeInfo);
                 }
                 catch (Exception ex)
                 {
@@ -30,15 +28,14 @@ namespace FrpGUI.Configs
             return config;
         }
 
-        protected virtual T GetImpl<T>() where T : AppConfigBase
+        protected virtual T GetImpl<T>(JsonTypeInfo<T> jsonTypeInfo) where T : AppConfigBase
         {
-            return JsonSerializer.Deserialize<T>(File.ReadAllBytes(ConfigPath),
-                            JsonHelper.GetJsonOptions(JsonSerializerContext));
+            return JsonSerializer.Deserialize(File.ReadAllText(ConfigPath), jsonTypeInfo);
         }
 
-        public virtual void Save()
+        public  void Save<T>(JsonTypeInfo<T> jsonTypeInfo)
         {
-            var bytes = JsonSerializer.SerializeToUtf8Bytes(this, GetType(), JsonHelper.GetJsonOptions(JsonSerializerContext));
+            var bytes = JsonSerializer.SerializeToUtf8Bytes(this, jsonTypeInfo);
             File.WriteAllBytes(ConfigPath, bytes);
         }
 

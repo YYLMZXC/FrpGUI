@@ -148,7 +148,7 @@
                                         Grid.RowSpan="99"
                                         Grid.Column="2"
                                         VerticalAlignment="Center"
-                                        Command="{Binding $parent[ItemsControl].DataContext.KillProcessCommand}"
+                                        Command="{Binding $parent[ItemsControl].((vm:SettingViewModel)DataContext).KillProcessCommand}"
                                         CommandParameter="{Binding .}"
                                         Content="结束" />
                                 </Grid>

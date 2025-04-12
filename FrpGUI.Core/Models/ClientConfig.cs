@@ -25,7 +25,7 @@ namespace FrpGUI.Models
 
         public ClientConfig()
         {
-            Name = "客户端1";
+            Name = "客户端";
         }
 
         public override char Type { get; } = 'c';
@@ -63,6 +63,21 @@ namespace FrpGUI.Models
             }
             str.AppendLine();
             return str.ToString();
+        }
+
+        public override void Adapt(FrpConfigBase config)
+        {
+            base.Adapt(config);
+            if (config is not ClientConfig clientConfig)
+            {
+                throw new ArgumentException("必须为" + nameof(ClientConfig));
+            }
+            clientConfig.EnableTls = EnableTls;
+            clientConfig.LoginFailExit = LoginFailExit;
+            clientConfig.PoolCount = PoolCount;
+            clientConfig.ServerAddress = ServerAddress;
+            clientConfig.ServerPort = ServerPort;
+            clientConfig.Rules = Rules.Select(rule => rule.Clone() as Rule).ToList();
         }
     }
 }

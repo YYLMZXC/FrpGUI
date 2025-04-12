@@ -14,12 +14,11 @@ namespace FrpGUI.Avalonia.DataProviders
         Task<ServerConfig> AddServerAsync();
 
         Task DeleteFrpConfigAsync(string id);
-
-        Task<List<FrpConfigBase>> GetFrpConfigsAsync();
+        Task<List<FrpConfigBase>> GetConfigsAsync();
 
         Task<FrpStatusInfo> GetFrpStatusAsync(string id);
 
-        Task<IList<FrpStatusInfo>> GetFrpStatusesAsync();
+        Task<List<FrpStatusInfo>> GetFrpStatusesAsync();
 
         Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter);
 

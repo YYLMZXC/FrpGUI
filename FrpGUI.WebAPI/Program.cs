@@ -105,7 +105,7 @@ internal class Program
         });
         Directory.SetCurrentDirectory(AppContext.BaseDirectory);
 
-        AppConfig config = AppConfigBase.Get<AppConfig>();
+        AppConfig config = AppConfig.Get();
         builder.Services.AddSingleton(config);
 
         return builder;

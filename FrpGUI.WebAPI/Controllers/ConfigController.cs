@@ -50,8 +50,8 @@ public class ConfigController : FrpControllerBase
         logger.Info($"指令：删除配置", frp);
     }
 
-    [HttpGet("FrpConfigs")]
-    public IList<FrpConfigBase> GetFrpConfigList()
+    [HttpGet("Configs")]
+    public List<FrpConfigBase> GetConfigList()
     {
         return configs.FrpConfigs;
     }

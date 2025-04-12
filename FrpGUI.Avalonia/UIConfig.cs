@@ -1,6 +1,5 @@
 ﻿using FrpGUI.Avalonia.Models;
 using FrpGUI.Configs;
-using FrpGUI.Utils;
 using FzLib;
 using System;
 using System.ComponentModel;
@@ -8,6 +7,7 @@ using System.IO;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using CommunityToolkit.Mvvm.ComponentModel;
+using System.Text.Json.Serialization.Metadata;
 
 namespace FrpGUI.Avalonia;
 
@@ -34,7 +34,7 @@ public class UIConfig : AppConfigBase, INotifyPropertyChanged
         set
         {
             runningMode = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RunningMode))); 
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(RunningMode)));
         }
     }
     public string ServerAddress { get; set; } = "http://localhost:5113";
@@ -47,25 +47,31 @@ public class UIConfig : AppConfigBase, INotifyPropertyChanged
         set
         {
             showTrayIcon = value;
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ShowTrayIcon))); 
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(ShowTrayIcon)));
         }
     }
-    protected override JsonSerializerContext JsonSerializerContext => FrpAvaloniaSourceGenerationContext.Default;
 
-    public override void Save()
+    private static JsonTypeInfo<UIConfig> JsonTypeInfo { get; } = FrpAvaloniaSourceGenerationContext.Get().UIConfig;
+
+    public static UIConfig Get()
+    {
+        return Get(JsonTypeInfo);
+    }
+
+    public void Save()
     {
         if (OperatingSystem.IsBrowser())
         {
-            var json = JsonSerializer.Serialize(this, typeof(UIConfig), JsonHelper.GetJsonOptions(JsonSerializerContext));
+            var json = JsonSerializer.Serialize(this, JsonTypeInfo);
             JsInterop.SetLocalStorage("config", json);
         }
         else
         {
-            base.Save();
+            Save(JsonTypeInfo);
         }
     }
 
-    protected override T GetImpl<T>()
+    protected override T GetImpl<T>(JsonTypeInfo<T> jsonTypeInfo)
     {
         if (OperatingSystem.IsBrowser())
         {
@@ -83,8 +89,7 @@ public class UIConfig : AppConfigBase, INotifyPropertyChanged
                 }
 
                 //优先级1：LocalStorage配置
-                return JsonSerializer.Deserialize<T>(JsInterop.GetLocalStorage("config"),
-                                  JsonHelper.GetJsonOptions(JsonSerializerContext));
+                return JsonSerializer.Deserialize<UIConfig>(JsInterop.GetLocalStorage("config"), JsonTypeInfo) as T;
             }
             catch (Exception ex)
             {
@@ -94,7 +99,7 @@ public class UIConfig : AppConfigBase, INotifyPropertyChanged
         }
         else
         {
-            return base.GetImpl<T>();
+            return base.GetImpl<T>(jsonTypeInfo);
         }
     }
 }

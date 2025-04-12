@@ -2,7 +2,6 @@
 using Avalonia.Browser;
 using FrpGUI.Avalonia;
 using FrpGUI.Avalonia.Models;
-using FrpGUI.Utils;
 using System;
 using System.IO;
 using System.Net;
@@ -16,6 +15,11 @@ using System.Threading.Tasks;
 
 internal sealed partial class Program
 {
+    public static AppBuilder BuildAvaloniaApp()
+    {
+        return AppBuilder.Configure<App>();
+    }
+
     private static async Task Main(string[] args)
     {
         await JSHost.ImportAsync("utils.js", "../utils.js");
@@ -42,11 +46,6 @@ internal sealed partial class Program
             return;
         }
         var s = await response.Content.ReadAsStreamAsync();
-        UIConfig.DefaultConfig = JsonSerializer.Deserialize<UIConfig>(s, JsonHelper.GetJsonOptions(FrpAvaloniaSourceGenerationContext.Default));
-    }
-
-    public static AppBuilder BuildAvaloniaApp()
-    {
-        return AppBuilder.Configure<App>();
+        UIConfig.DefaultConfig = JsonSerializer.Deserialize(s, FrpAvaloniaSourceGenerationContext.Default.UIConfig);
     }
 }
