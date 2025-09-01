@@ -30,7 +30,7 @@
   
   <ItemGroup Condition="'$(Configuration)' == 'Debug'  and '$(FzLocal)' == 'T'">
     <Reference Include="FzLib">
-      <HintPath>..\..\FzLib\Publish\Release\net8.0\FzLib.dll</HintPath>
+      <HintPath>..\..\FzLib\Publish\libs\FzLib.dll</HintPath>
     </Reference>
   </ItemGroup>
 

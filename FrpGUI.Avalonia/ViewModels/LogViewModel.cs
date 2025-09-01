@@ -3,22 +3,26 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FrpGUI.Avalonia.DataProviders;
 using FrpGUI.Models;
-using FzLib.Avalonia.Messages;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using FzLib.Avalonia.Services;
 
 namespace FrpGUI.Avalonia.ViewModels;
 
 public partial class LogViewModel : ViewModelBase
 {
+    private readonly IClipboardService clipboard;
     private readonly UIConfig config;
     private readonly LocalLogger logger;
 
     [ObservableProperty]
     private LogInfo selectedLog;
 
-    public LogViewModel(IDataProvider provider, UIConfig config, LocalLogger logger) : base(provider)
+    public LogViewModel(IDataProvider provider, IClipboardService clipboard, UIConfig config, LocalLogger logger) :
+        base(provider,null,null)
     {
+        this.clipboard = clipboard;
         this.config = config;
         this.logger = logger;
         StartTimer();
@@ -36,6 +40,7 @@ public partial class LogViewModel : ViewModelBase
             {
                 Logs.RemoveAt(Logs.Count - 1);
             }
+
             IBrush brush = Brushes.Transparent;
             if (e.Type == 'W')
             {
@@ -57,6 +62,7 @@ public partial class LogViewModel : ViewModelBase
                     }
                 }
             }
+
             var log = new LogInfo(e)
             {
                 TypeBrush = brush,
@@ -67,14 +73,13 @@ public partial class LogViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-
         }
     }
 
     [RelayCommand]
-    private void CopyLog(LogInfo log)
+    private async Task CopyLogAsync(LogInfo log)
     {
-        SendMessage(new GetClipboardMessage()).Clipboard.SetTextAsync(log.Message);
+        await clipboard.SetTextAsync(log.Message);
     }
 
     private void StartTimer()
@@ -95,6 +100,7 @@ public partial class LogViewModel : ViewModelBase
                 }
             });
         }
+
         logger.NewLog += (s, e) => AddLog(e.Log);
         logger.SaveLogs = false;
         foreach (var log in logger.GetSavedLogs())

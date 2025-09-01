@@ -16,7 +16,5 @@
     CustomTitleBar="True"
     Icon="/Assets/icon.ico"
     mc:Ignorable="d">
-    <Grid x:Name="grid">
-        <views:MainView x:Name="mainView" />
-    </Grid>
+    <Grid x:Name="grid" />
 </c:ExtendedWindow>

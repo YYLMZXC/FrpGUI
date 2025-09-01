@@ -15,20 +15,22 @@ namespace FrpGUI.Avalonia.Views;
 
 public partial class MainWindow : ExtendedWindow
 {
-    private readonly UIConfig config=App.Services.GetRequiredService<UIConfig>();
-
-    private readonly FrpProcessCollection processes= App.Services.GetService<FrpProcessCollection>();
+    private readonly UIConfig config = App.Services.GetRequiredService<UIConfig>();
+    private readonly IDialogService dialogService;
+    private readonly FrpProcessCollection processes = App.Services.GetService<FrpProcessCollection>();
 
     private bool forceClose = false;
 
-    public MainWindow()
+    public MainWindow(IDialogService dialogService,MainView mainView)
     {
+        this.dialogService = dialogService;
         InitializeComponent();
+
+        grid.Children.Add(mainView);
         if (OperatingSystem.IsWindows())
         {
             grid.Children.Add(new WindowButtons());
         }
-
     }
 
     public async Task TryCloseAsync()
@@ -45,13 +47,15 @@ public partial class MainWindow : ExtendedWindow
             {
                 Show();
             }
+
             var runningFrps = processes.Where(p => p.Value.ProcessStatus == ProcessStatus.Running).ToList();
-            if (await this.ShowYesNoDialogAsync("退出", $"存在{runningFrps.Count}个正在运行的frp进程，是否退出？") == true)
+            if (await dialogService.ShowYesNoDialogAsync("退出", $"存在{runningFrps.Count}个正在运行的frp进程，是否退出？") == true)
             {
                 foreach (var frp in runningFrps)
                 {
                     await frp.Value.StopAsync();
                 }
+
                 forceClose = true;
                 Close();
             }
@@ -69,6 +73,7 @@ public partial class MainWindow : ExtendedWindow
         {
             return;
         }
+
         if (config.ShowTrayIcon)
         {
             e.Cancel = true;

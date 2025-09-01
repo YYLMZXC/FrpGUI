@@ -3,6 +3,7 @@
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:c="clr-namespace:FrpGUI.Avalonia.Converters"
+    xmlns:fz="using:FzLib.Avalonia.Styles"
     RequestedThemeVariant="Default">
 
     <Application.Styles>
@@ -11,7 +12,7 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceInclude Source="avares://FzLib.Avalonia/Resources.axaml" />
+                <fz:FzLibAvaloniaStyles />
                 <ResourceInclude Source="/Brushes.axaml" />
             </ResourceDictionary.MergedDictionaries>
             <c:NullableValueConverter x:Key="NullableValueConverter" />

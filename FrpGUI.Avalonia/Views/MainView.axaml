@@ -2,6 +2,7 @@
     x:Class="FrpGUI.Avalonia.Views.MainView"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="using:FzLib.Avalonia.Behaviors"
     xmlns:c="clr-namespace:FrpGUI.Avalonia.Converters"
     xmlns:cf="clr-namespace:FrpGUI.Configs;assembly=FrpGUI.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -27,14 +28,17 @@
             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
             RowDefinitions="Auto,8,*,8,Auto">
             <TextBlock
-                x:Name="tbkLogo"
                 Padding="0,8"
                 HorizontalAlignment="Stretch"
                 Background="Transparent"
                 FontSize="20"
                 FontWeight="Bold"
                 Text="FrpGUI"
-                TextAlignment="Center" />
+                TextAlignment="Center">
+                <Interaction.Behaviors>
+                    <b:WindowDragBehavior />
+                </Interaction.Behaviors>
+            </TextBlock>
             <ListBox
                 Grid.Row="2"
                 ItemsSource="{Binding FrpProcesses}"
@@ -108,28 +112,26 @@
         </Grid>
 
         <v:ControlBar
-            x:Name="controlBar"
             Grid.Column="2"
-            Grid.ColumnSpan="99" />
-        <v:ClientPanel
+            Grid.ColumnSpan="99">
+            <Interaction.Behaviors>
+                <b:WindowDragBehavior />
+            </Interaction.Behaviors>
+        </v:ControlBar>
+        <Panel
             Grid.Row="1"
             Grid.Column="2"
             Margin="8"
-            DataContext="{Binding CurrentPanelViewModel}"
-            IsVisible="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).IsClientPanelVisible}" />
-        <v:ServerPanel
+            IsVisible="{Binding IsClientPanelVisible}">
+            <v:ClientPanel DataContext="{Binding CurrentPanelViewModel}" />
+        </Panel>
+        <Panel
             Grid.Row="1"
             Grid.Column="2"
             Margin="8"
-            DataContext="{Binding CurrentPanelViewModel}"
-            IsVisible="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).IsServerPanelVisible}" />
-        <!--<ContentControl
-            x:Name="mainPanel"
-            Grid.Row="1"
-            Grid.Column="2"
-            Margin="8"
-            Content="{Binding $parent[UserControl].((vm:MainViewModel)DataContext).CurrentMainContent}"
-            DataContext="{Binding CurrentPanelViewModel}" />-->
+            IsVisible="{Binding IsServerPanelVisible}">
+            <v:ServerPanel DataContext="{Binding CurrentPanelViewModel}" />
+        </Panel>
 
         <v:LogPanel
             Grid.Row="1"

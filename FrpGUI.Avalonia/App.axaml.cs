@@ -1,24 +1,26 @@
-﻿using Avalonia;
+﻿using System;
+using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using System.Threading.Tasks;
+using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
 using FrpGUI.Avalonia.DataProviders;
+using FrpGUI.Avalonia.Factories;
 using FrpGUI.Avalonia.ViewModels;
 using FrpGUI.Avalonia.Views;
 using FrpGUI.Configs;
 using FrpGUI.Enums;
 using FrpGUI.Models;
 using FrpGUI.Services;
+using FzLib.Application.Startup;
 using FzLib.Avalonia.Dialogs;
+using FzLib.Avalonia.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using FzLib.Program.Startup;
-using System.Diagnostics.CodeAnalysis;
 
 namespace FrpGUI.Avalonia;
 
@@ -86,6 +88,10 @@ public partial class App : Application
             }
         }
 
+        builder.Services.AddDialogService();
+        builder.Services.AddClipboardService();
+        builder.Services.AddStorageProviderService();
+
         switch (uiconfig.RunningMode)
         {
             case RunningMode.Singleton:
@@ -115,6 +121,8 @@ public partial class App : Application
         builder.Services.AddTransient<ServerPanel>();
         builder.Services.AddTransient<FrpConfigViewModel>();
 
+        builder.Services.AddSingleton<DialogFactory>();
+        
         AddViewAndViewModel<MainView, MainViewModel>(builder);
         AddViewAndViewModel<RuleDialog, RuleViewModel>(builder);
         AddViewAndViewModel<SettingsDialog, SettingViewModel>(builder);

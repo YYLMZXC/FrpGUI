@@ -5,6 +5,7 @@
     xmlns:c="clr-namespace:FrpGUI.Avalonia.Converters"
     xmlns:cf="clr-namespace:FrpGUI.Configs;assembly=FrpGUI.Core"
     xmlns:ctrl="using:FzLib.Avalonia.Controls"
+    xmlns:cvt="using:FzLib.Avalonia.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dialog="using:FzLib.Avalonia.Dialogs"
     xmlns:gb="using:GroupBox.Avalonia.Controls"
@@ -48,13 +49,13 @@
                         SelectedItem="{Binding Config.RunningMode}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding ., Converter={StaticResource DescriptionConverter}}" />
+                                <TextBlock Text="{Binding ., Converter={x:Static cvt:Converters.Description}}" />
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>
 
                     <ctrl:StackFormItemGroup
-                        IsVisible="{Binding Config.RunningMode, Converter={StaticResource EqualConverter}, ConverterParameter=Service}"
+                        IsVisible="{Binding Config.RunningMode, Converter={x:Static cvt:Converters.EqualWithParameter}, ConverterParameter=Service}"
                         LabelWidth="128">
 
                         <ctrl:FormItem Label="服务器地址：">
@@ -95,7 +96,7 @@
                     </ctrl:StackFormItemGroup>
 
                     <ctrl:StackFormItemGroup
-                        IsVisible="{Binding Config.RunningMode, Converter={StaticResource EqualConverter}, ConverterParameter=Singleton}"
+                        IsVisible="{Binding Config.RunningMode, Converter={x:Static cvt:Converters.EqualWithParameter}, ConverterParameter=Singleton}"
                         LabelWidth="128">
 
                         <ToggleSwitch

@@ -2,13 +2,14 @@
     x:Class="FrpGUI.Avalonia.Views.ClientPanel"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cfg="using:FrpGUI.Models"
     xmlns:ctrl="using:FzLib.Avalonia.Controls"
+    xmlns:cvt="clr-namespace:FzLib.Avalonia.Converters;assembly=FzLib.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:v="clr-namespace:FrpGUI.Avalonia.Views"
     xmlns:vm="using:FrpGUI.Avalonia.ViewModels"
-    xmlns:cfg="using:FrpGUI.Models"
     x:Name="root"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -50,26 +51,26 @@
                     <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).ServerAddress}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="端口号">
-                  <NumericUpDown
-                      Classes="PortInput"
-                      Value="{Binding Frp.((cfg:ClientConfig)Config).ServerPort}" />
+                    <NumericUpDown
+                        Classes="PortInput"
+                        Value="{Binding Frp.((cfg:ClientConfig)Config).ServerPort}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="连接密钥">
                     <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).Token}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="预连接数量">
-                  <NumericUpDown
-                      Classes="PortInput"
-                      Value="{Binding Frp.((cfg:ClientConfig)Config).PoolCount}" />
+                    <NumericUpDown
+                        Classes="PortInput"
+                        Value="{Binding Frp.((cfg:ClientConfig)Config).PoolCount}" />
                 </ctrl:FormItem>
 
                 <ctrl:FormItem Label="管理面板地址">
                     <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardAddress}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="管理面板端口">
-                  <NumericUpDown
-                      Classes="PortInput"
-                      Value="{Binding Frp.((cfg:ClientConfig)Config).DashBoardPort}" />
+                    <NumericUpDown
+                        Classes="PortInput"
+                        Value="{Binding Frp.((cfg:ClientConfig)Config).DashBoardPort}" />
                 </ctrl:FormItem>
                 <ctrl:FormItem Label="管理面板用户名">
                     <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardUsername}" />
@@ -142,7 +143,7 @@
                                                 Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).EnableRuleCommand}"
                                                 CommandParameter="{Binding .}"
                                                 Header="启用"
-                                                IsVisible="{Binding Enable, Converter={StaticResource InverseBoolConverter}}" />
+                                                IsVisible="{Binding Enable, Converter={x:Static cvt:Converters.InverseBool}}" />
                                             <MenuItem
                                                 Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).DisableRuleCommand}"
                                                 CommandParameter="{Binding .}"

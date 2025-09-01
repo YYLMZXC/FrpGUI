@@ -2,19 +2,19 @@
 using CommunityToolkit.Mvvm.Input;
 using FrpGUI.Avalonia.DataProviders;
 using FrpGUI.Models;
-using FzLib.Avalonia.Messages;
-
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using FzLib.Program.Startup;
-using Microsoft.Extensions.DependencyInjection;
+using FzLib.Application.Startup;
+using FzLib.Avalonia.Dialogs;
 
 namespace FrpGUI.Avalonia.ViewModels
 {
     public partial class SettingViewModel : ViewModelBase
     {
+        private readonly IStartupManager startupManager;
+
         [ObservableProperty]
         private string newToken;
 
@@ -32,12 +32,16 @@ namespace FrpGUI.Avalonia.ViewModels
 
         [ObservableProperty]
         private string token;
-        public SettingViewModel(IDataProvider provider, UIConfig config) : base(provider)
+
+        public SettingViewModel(IDataProvider provider, IDialogService dialogService, IStartupManager startupManager,
+            UIConfig config) : base(provider, dialogService)
         {
+            this.startupManager = startupManager;
             if (!OperatingSystem.IsBrowser())
             {
-                startup = App.Services.GetRequiredService<IStartupManager>().IsStartupEnabled();
+                startup = startupManager.IsStartupEnabled();
             }
+
             Config = config;
             ServerAddress = config.ServerAddress;
             FillProcesses();
@@ -59,7 +63,8 @@ namespace FrpGUI.Avalonia.ViewModels
                 Processes = new ObservableCollection<ProcessInfo>(await DataProvider.GetSystemProcesses());
             }
             catch (Exception ex)
-            { }
+            {
+            }
         }
 
         [RelayCommand]
@@ -73,12 +78,7 @@ namespace FrpGUI.Avalonia.ViewModels
             }
             catch (Exception ex)
             {
-                await SendMessage(new CommonDialogMessage()
-                {
-                    Type = CommonDialogMessage.CommonDialogType.Error,
-                    Title = "结束进程失败",
-                    Exception = ex,
-                }).Task;
+                await DialogService.ShowErrorDialogAsync("结束进程失败",ex);
             }
         }
 
@@ -86,8 +86,6 @@ namespace FrpGUI.Avalonia.ViewModels
         {
             if (!OperatingSystem.IsBrowser())
             {
-                var startupManager = App.Services.GetRequiredService<IStartupManager>();
-
                 if (value)
                 {
                     startupManager.EnableStartup("s");
@@ -99,6 +97,7 @@ namespace FrpGUI.Avalonia.ViewModels
                 }
             }
         }
+
         [RelayCommand]
         private async Task RestartAsync()
         {
@@ -107,6 +106,7 @@ namespace FrpGUI.Avalonia.ViewModels
             {
                 Config.ServerToken = Token;
             }
+
             Config.Save();
 
             if (OperatingSystem.IsBrowser())
@@ -133,16 +133,12 @@ namespace FrpGUI.Avalonia.ViewModels
                 await DataProvider.SetTokenAsync(OldToken, NewToken);
                 Config.ServerToken = NewToken;
                 Config.Save();
-                await SendMessage(new CommonDialogMessage()
-                {
-                    Type = CommonDialogMessage.CommonDialogType.Ok,
-                    Title = "修改密码",
-                    Message = "修改密码成功"
-                }).Task;
+
+                await DialogService.ShowOkDialogAsync("修改密码", "修改密码成功");
             }
             catch (Exception ex)
             {
-                await ShowErrorAsync(ex, "修改密码失败");
+                await DialogService.ShowErrorDialogAsync("修改密码失败",ex);
             }
         }
     }

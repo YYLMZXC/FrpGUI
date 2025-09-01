@@ -25,7 +25,6 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" />
     <PackageReference Include="Avalonia.Themes.Fluent" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" />
     <PackageReference Include="BinToss.GroupBox.Avalonia" />
     <PackageReference Include="CommunityToolkit.Mvvm" />
 
@@ -35,15 +34,16 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Serilog" />
+    <PackageReference Include="Xaml.Behaviors.Interactivity" />
     <!--<PackageReference Include="WebView.Avalonia" />-->
   </ItemGroup>
 
   <ItemGroup Condition="'$(Configuration)' == 'Debug' and '$(FzLocal)' == 'T'">
     <Reference Include="FzLib">
-      <HintPath>..\..\FzLib\Publish\Release\net8.0\FzLib.dll</HintPath>
+      <HintPath>..\..\FzLib\Publish\libs\FzLib.dll</HintPath>
     </Reference>
     <Reference Include="FzLib.Avalonia">
-      <HintPath>..\..\FzLib\Publish\Release\net8.0\FzLib.Avalonia.dll</HintPath>
+      <HintPath>..\..\FzLib\Publish\libs\FzLib.Avalonia.dll</HintPath>
     </Reference>
   </ItemGroup>
 

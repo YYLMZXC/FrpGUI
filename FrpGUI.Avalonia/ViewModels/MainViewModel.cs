@@ -1,28 +1,26 @@
-﻿using Avalonia.Platform.Storage;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.IO;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
+using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 //using AvaloniaWebView;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FrpGUI.Avalonia.DataProviders;
+using FrpGUI.Avalonia.Factories;
 using FrpGUI.Avalonia.Views;
-
+using FrpGUI.Configs;
 using FrpGUI.Enums;
 using FrpGUI.Models;
-using FzLib.Avalonia.Messages;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.ObjectModel;
-using System.IO;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
-using static FzLib.Avalonia.Messages.CommonDialogMessage;
-using static FzLib.Program.Runtime.SimplePipe;
-using FrpGUI.Configs;
-using Serilog;
-using System.Diagnostics;
+using FzLib.Avalonia.Dialogs;
+using FzLib.Avalonia.Dialogs.Pickers;
+using FzLib.Avalonia.Services;
 
 namespace FrpGUI.Avalonia.ViewModels;
 
@@ -30,7 +28,7 @@ public partial class MainViewModel : ViewModelBase
 {
     private readonly UIConfig config;
     private readonly LocalLogger logger;
-    private readonly IServiceProvider services;
+    private readonly IStorageProviderService storage;
     [ObservableProperty]
     private bool activeProgressRingOverlay = true;
 
@@ -54,13 +52,15 @@ public partial class MainViewModel : ViewModelBase
     private TaskCompletionSource tcsUpdate;
 
     public MainViewModel(IDataProvider provider,
+        IDialogService dialogService,
+        DialogFactory dialogFactory,
+        IStorageProviderService storage,
         UIConfig config,
-        IServiceProvider services,
         FrpConfigViewModel frpConfigViewModel,
-        LocalLogger logger) : base(provider)
+        LocalLogger logger) : base(provider, dialogService, dialogFactory)
     {
+        this.storage = storage;
         this.config = config;
-        this.services = services;
         InitializeDataAndStartTimer();
         CurrentPanelViewModel = frpConfigViewModel;
         this.logger = logger;
@@ -85,7 +85,7 @@ public partial class MainViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            await ShowErrorAsync(ex, "新增客户端失败");
+            await DialogService.ShowErrorDialogAsync("新增客户端失败", ex);
         }
     }
 
@@ -107,7 +107,7 @@ public partial class MainViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            await ShowErrorAsync(ex, "新增客户端失败");
+            await DialogService.ShowErrorDialogAsync("新增客户端失败", ex);
         }
     }
 
@@ -117,8 +117,8 @@ public partial class MainViewModel : ViewModelBase
         var frpConfig = CurrentFrpProcess.Config;
         string user = frpConfig.DashBoardUsername;
         string pswd = frpConfig.DashBoardPassword;
-        string ip = config.RunningMode == RunningMode.Singleton ?
-            "localhost"
+        string ip = config.RunningMode == RunningMode.Singleton
+            ? "localhost"
             : new Uri(config.ServerAddress).Host;
         ushort port = frpConfig.DashBoardPort;
         string url = $"http://{ip}:{port}";
@@ -155,20 +155,20 @@ public partial class MainViewModel : ViewModelBase
                     return;
 
                 case TokenVerification.NotEqual:
-                    await ShowErrorAsync("密码不正确，请重新设置密码", "验证密码错误");
-                    await SendMessage(new DialogHostMessage(services.GetRequiredService<SettingsDialog>())).Task;
+                    await DialogService.ShowErrorDialogAsync("密码验证错误", "密码不正确，请重新设置密码");
+                    await OpenSettingsDialogAsync();
                     goto start;
 
                 case TokenVerification.NeedSet:
-                    await ShowErrorAsync("服务端密码为空，请先设置密码", "密码为空");
-                    await SendMessage(new DialogHostMessage(services.GetRequiredService<SettingsDialog>())).Task;
+                    await DialogService.ShowErrorDialogAsync("密码为空", "服务端密码为空，请先设置密码");
+                    await OpenSettingsDialogAsync();
                     goto start;
             }
         }
         catch (Exception ex)
         {
-            await ShowErrorAsync(ex, "网络错误，无法连接到FrpGUI服务端");
-            await SendMessage(new DialogHostMessage(services.GetRequiredService<SettingsDialog>())).Task;
+            await DialogService.ShowErrorDialogAsync("网络错误，无法连接到FrpGUI服务端", ex);
+            await OpenSettingsDialogAsync();
             goto start;
         }
     }
@@ -203,7 +203,7 @@ public partial class MainViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            await ShowErrorAsync(ex, "创建副本失败");
+            await DialogService.ShowErrorDialogAsync("创建副本失败", ex);
         }
     }
 
@@ -215,13 +215,8 @@ public partial class MainViewModel : ViewModelBase
     [RelayCommand]
     private async Task DeleteConfigAsync(IFrpProcess fp)
     {
-        var message = SendMessage(new CommonDialogMessage()
-        {
-            Type = CommonDialogType.YesNo,
-            Title = "删除配置",
-            Message = $"是否删除配置“{fp.Config.Name}”？"
-        });
-        if (true.Equals(await message.Task))
+        var result = await DialogService.ShowYesNoDialogAsync("删除配置", $"是否删除配置“{fp.Config.Name}”？");
+        if (true.Equals(result))
         {
             try
             {
@@ -230,7 +225,7 @@ public partial class MainViewModel : ViewModelBase
             }
             catch (Exception ex)
             {
-                await ShowErrorAsync(ex, "删除失败");
+                await DialogService.ShowErrorDialogAsync("删除失败", ex);
             }
         }
     }
@@ -244,41 +239,26 @@ public partial class MainViewModel : ViewModelBase
             FilePickerFileType filter;
 
             config = CurrentFrpProcess.Config.ToToml();
-            filter = new FilePickerFileType("ini配置文件")
-            {
-                Patterns = ["*.toml"],
-                MimeTypes = ["application/toml"]
-            };
-            var message = SendMessage(new CommonDialogMessage()
-            {
-                Type = CommonDialogType.YesNo,
-                Title = "导出配置",
-                Message = "是否导出配置文件？",
-                Detail = config
-            });
 
-            if (true.Equals(await message.Task))
+            var result = await DialogService.ShowYesNoDialogAsync("导出配置", $"是否导出配置文件？", config);
+
+            if (true.Equals(result))
             {
-                var file = await SendMessage(new GetStorageProviderMessage()).StorageProvider.SaveFilePickerAsync(
-                    new FilePickerSaveOptions
-                    {
-                        FileTypeChoices = [filter],
-                        SuggestedFileName = CurrentFrpProcess.Config.Name,
-                        DefaultExtension = filter.Patterns[0].Split('.')[1]
-                    });
+                var options = FilePickerOptionsBuilder.Create()
+                    .AddFilter("TOML配置文件", ["*.toml"], ["application/toml"])
+                    .SuggestedFileName(CurrentFrpProcess.Config.Name)
+                    .BuildSaveOptions();
+
+                var file = await storage.SaveFilePickerAndGetPathAsync(options);
                 if (file != null)
                 {
-                    string path = file.TryGetLocalPath();
-                    if (path != null)
-                    {
-                        File.WriteAllText(path, config, new UTF8Encoding(false));
-                    }
+                    await File.WriteAllTextAsync(file, config, new UTF8Encoding(false));
                 }
             }
         }
         catch (Exception ex)
         {
-            await ShowErrorAsync(ex, "启动失败");
+            await DialogService.ShowErrorDialogAsync("启动失败", ex);
         }
     }
 
@@ -292,12 +272,7 @@ public partial class MainViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            SendMessage(new CommonDialogMessage()
-            {
-                Type = CommonDialogType.Error,
-                Title = "获取配置列表失败",
-                Exception = ex
-            });
+            await DialogService.ShowErrorDialogAsync("获取配置列表失败", ex);
         }
 
         if (DataProvider is WebDataProvider webDataProvider)
@@ -313,6 +288,7 @@ public partial class MainViewModel : ViewModelBase
         {
             newValue.StatusChanged += CurrentViewFrp_StatusChanged;
         }
+
         UpdateConfigPanelVisible();
     }
 
@@ -325,6 +301,10 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    private Task OpenSettingsDialogAsync()
+    {
+        return DialogService.ShowCustomDialogAsync(DialogFactory.CreateSettingsDialog());
+    }
     [RelayCommand]
     private async Task RestartAsync()
     {
@@ -336,14 +316,14 @@ public partial class MainViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            await ShowErrorAsync(ex, "重启失败");
+            await DialogService.ShowErrorDialogAsync("重启失败", ex);
         }
     }
 
     [RelayCommand]
     private async Task SettingsAsync()
     {
-        await SendMessage(new DialogHostMessage(services.GetRequiredService<SettingsDialog>())).Task;
+        await OpenSettingsDialogAsync();
     }
 
     [RelayCommand]
@@ -357,7 +337,7 @@ public partial class MainViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            await ShowErrorAsync(ex, "启动失败");
+            await DialogService.ShowErrorDialogAsync("启动失败", ex);
         }
     }
 
@@ -371,7 +351,7 @@ public partial class MainViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            await ShowErrorAsync(ex, "停止失败");
+            await DialogService.ShowErrorDialogAsync("停止失败", ex);
         }
     }
 
@@ -388,6 +368,7 @@ public partial class MainViewModel : ViewModelBase
         {
             return;
         }
+
         try
         {
             lastUpdateStatusTime = DateTime.Now;
