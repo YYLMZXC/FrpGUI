@@ -8,6 +8,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Avalonia.Media;
+using Avalonia.Threading;
 using FrpGUI.Avalonia.DataProviders;
 using FrpGUI.Avalonia.Factories;
 using FrpGUI.Avalonia.ViewModels;
@@ -19,14 +20,18 @@ using FrpGUI.Services;
 using FzLib.Application.Startup;
 using FzLib.Avalonia.Dialogs;
 using FzLib.Avalonia.Services;
+using FzLib.Programming;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace FrpGUI.Avalonia;
 
 public partial class App : Application
 {
     private MainWindow mainWindow;
+
+    private bool dontOpen = false;
 
     public App()
     {
@@ -36,22 +41,25 @@ public partial class App : Application
 
     public IHost AppHost { get; private set; }
 
-    public static void AddViewAndViewModel<TView, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TViewModel>(HostApplicationBuilder builder, ServiceLifetime lifetime = ServiceLifetime.Transient)
-     where TView : Control, new()
-     where TViewModel : class
+    public static void AddViewAndViewModel<TView,
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+        TViewModel>(
+        HostApplicationBuilder builder, ServiceLifetime lifetime = ServiceLifetime.Transient)
+        where TView : Control, new()
+        where TViewModel : class
     {
         switch (lifetime)
         {
             case ServiceLifetime.Singleton:
                 builder.Services.AddSingleton<TViewModel>();
                 builder.Services.AddSingleton(s => new TView()
-                { DataContext = s.GetRequiredService<TViewModel>() });
+                    { DataContext = s.GetRequiredService<TViewModel>() });
 
                 break;
             case ServiceLifetime.Transient:
                 builder.Services.AddTransient<TViewModel>();
                 builder.Services.AddTransient(s => new TView()
-                { DataContext = s.GetRequiredService<TViewModel>() });
+                    { DataContext = s.GetRequiredService<TViewModel>() });
 
                 break;
             default:
@@ -62,6 +70,29 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            if (!TcpSingleInstanceHelper.EnsureSingleInstance(() =>
+                {
+                    Dispatcher.UIThread.Invoke(() => 
+                    {
+                        if (desktop.MainWindow == null)
+                        {
+                            desktop.MainWindow = mainWindow;
+                        }
+                        mainWindow.BringToFront();
+                    });
+                    return Task.CompletedTask;
+                }))
+            {
+                Log.Information("检测到已有实例在运行，程序将退出");
+                dontOpen = true;
+                desktop.Shutdown();
+                Environment.Exit(0);
+                return;
+            }
+        }
 
         //Windows上使用微软雅黑
         if (OperatingSystem.IsWindows())
@@ -122,7 +153,7 @@ public partial class App : Application
         builder.Services.AddTransient<FrpConfigViewModel>();
 
         builder.Services.AddSingleton<DialogFactory>();
-        
+
         AddViewAndViewModel<MainView, MainViewModel>(builder);
         AddViewAndViewModel<RuleDialog, RuleViewModel>(builder);
         AddViewAndViewModel<SettingsDialog, SettingViewModel>(builder);
@@ -136,8 +167,14 @@ public partial class App : Application
         Services = AppHost.Services;
         AppHost.Start();
     }
+
     public override void OnFrameworkInitializationCompleted()
     {
+        if (dontOpen)
+        {
+            return;
+        }
+
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             //BindingPlugins.DataValidators.RemoveAt(0);
@@ -171,6 +208,7 @@ public partial class App : Application
         TrayIcon.GetIcons(this)[0].Dispose();
         await AppHost.StopAsync();
     }
+
     private async void ExitMenuItem_Click(object sender, EventArgs e)
     {
         if (ApplicationLifetime is not IClassicDesktopStyleApplicationLifetime desktop)
@@ -197,8 +235,7 @@ public partial class App : Application
     private void TrayIcon_Clicked(object sender, EventArgs e)
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            if (desktop.MainWindow == null)
+        {  if (desktop.MainWindow == null)
             {
                 desktop.MainWindow = mainWindow;
             }

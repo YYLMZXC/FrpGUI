@@ -128,7 +128,7 @@
                 <StackPanel
                     Orientation="Horizontal"
                     Spacing="4">
-                    <PathIcon Data="{StaticResource IconRestart}" />
+                    <PathIcon Data="{StaticResource IconAdd}" />
                     <TextBlock VerticalAlignment="Center">增加规则</TextBlock>
                 </StackPanel>
             </Button>

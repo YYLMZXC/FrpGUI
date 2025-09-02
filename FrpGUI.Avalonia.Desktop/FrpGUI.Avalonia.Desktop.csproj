@@ -14,10 +14,12 @@
     <BaseIntermediateOutputPath>$(Temp)\$(SolutionName)\obj\$(Configuration)\$(AssemblyName)</BaseIntermediateOutputPath>
     <ApplicationIcon>../FrpGUI.Avalonia/Assets/icon.ico</ApplicationIcon>
     <Version>$(AppVersion)</Version>
+    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
     <PublishAot>true</PublishAot>
     <TrimMode>partial</TrimMode>
-
-    <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
   <ItemGroup>
@@ -30,9 +32,16 @@
     <PackageReference Include="Avalonia.Desktop" />
     <!--<PackageReference Include="WebView.Avalonia.Desktop" />-->
     <PackageReference Include="Serilog.Sinks.File" />
+    <PackageReference Include="HotAvalonia" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\FrpGUI.Avalonia\FrpGUI.Avalonia.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="FzLib">
+      <HintPath>..\..\FzLib\Publish\libs\FzLib.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

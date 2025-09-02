@@ -38,5 +38,6 @@
     <PackageVersion Include="WebView.Avalonia" Version="11.0.0.1" />
     <PackageVersion Include="WebView.Avalonia.Desktop" Version="11.0.0.1" />
     <PackageVersion Include="Xaml.Behaviors.Interactivity" Version="11.3.2" />
+    <PackageVersion Include="HotAvalonia" Version="3.0.0" PrivateAssets="All" Publish="True" />
   </ItemGroup>
 </Project>

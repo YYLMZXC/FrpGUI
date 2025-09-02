@@ -16,57 +16,59 @@
     <ScrollViewer
         HorizontalScrollBarVisibility="Disabled"
         VerticalScrollBarVisibility="Auto">
-        <ctrl:StackFormItemGroup Margin="8">
-            <ctrl:FormItem Label="名称">
+        <ctrl:WrapFormItemGroup Margin="8">
+            <ctrl:WrapFormItemGroup.Styles>
+                <Style Selector="ctrl|FormItem">
+                    <Setter Property="Width" Value="200" />
+                    <Setter Property="Height" Value="64" />
+                </Style>
+            </ctrl:WrapFormItemGroup.Styles>
+            <ctrl:FormItem Header="名称">
                 <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).Name}" />
             </ctrl:FormItem>
-            <ctrl:FormItem Label="选项">
-                <ctrl:WrapFormItemGroup>
-                    <CheckBox
-                        Content="自动启动"
-                        IsChecked="{Binding Frp.((cfg:ServerConfig)Config).AutoStart}" />
-                    <!--<CheckBox
-                        Content="仅允许TLS传输层安全性协议"
-                        IsChecked="{Binding Frp.((cfg:ServerConfig)Config).EnableTls}" />-->
-                </ctrl:WrapFormItemGroup>
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="端口号">
+
+            <ctrl:FormItem Header="端口号">
                 <NumericUpDown
                     Classes="PortInput"
                     Value="{Binding Frp.((cfg:ServerConfig)Config).Port}" />
             </ctrl:FormItem>
-            <ctrl:FormItem Label="连接密钥">
+            <ctrl:FormItem Header="连接密钥">
                 <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).Token}" />
             </ctrl:FormItem>
-            <ctrl:FormItem Label="HTTP端口">
-              <NumericUpDown
-                  Classes="PortInput"
-                  Value="{Binding Frp.((cfg:ServerConfig)Config).HttpPort}" />
+            <ctrl:FormItem Header="HTTP端口">
+                <NumericUpDown
+                    Classes="PortInput"
+                    Value="{Binding Frp.((cfg:ServerConfig)Config).HttpPort}" />
             </ctrl:FormItem>
-            <ctrl:FormItem Label="HTTPS端口">
+            <ctrl:FormItem Header="HTTPS端口">
                 <NumericUpDown
                     Classes="PortInput"
                     Value="{Binding Frp.((cfg:ServerConfig)Config).HttpsPort}" />
             </ctrl:FormItem>
-            <ctrl:FormItem Label="最大连接数">
-              <NumericUpDown
-                  Classes="PortInput"
-                  Value="{Binding Frp.((cfg:ServerConfig)Config).MaxPoolCount}" />
+            <ctrl:FormItem Header="最大连接数">
+                <NumericUpDown
+                    Classes="PortInput"
+                    Value="{Binding Frp.((cfg:ServerConfig)Config).MaxPoolCount}" />
             </ctrl:FormItem>
-            <ctrl:FormItem Label="控制面板地址">
+            <ctrl:FormItem Header="控制面板地址">
                 <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardAddress}" />
             </ctrl:FormItem>
-            <ctrl:FormItem Label="控制面板端口号">
-              <NumericUpDown
-                  Classes="PortInput"
-                  Value="{Binding Frp.((cfg:ServerConfig)Config).DashBoardPort}" />
+            <ctrl:FormItem Header="控制面板端口号">
+                <NumericUpDown
+                    Classes="PortInput"
+                    Value="{Binding Frp.((cfg:ServerConfig)Config).DashBoardPort}" />
             </ctrl:FormItem>
-            <ctrl:FormItem Label="控制面板用户名">
+            <ctrl:FormItem Header="控制面板用户名">
                 <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardUsername}" />
             </ctrl:FormItem>
-            <ctrl:FormItem Label="控制面板密码">
+            <ctrl:FormItem Header="控制面板密码">
                 <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardPassword}" />
             </ctrl:FormItem>
-        </ctrl:StackFormItemGroup>
+            <ctrl:FormItem Header=" ">
+                <CheckBox
+                    Content="自动启动"
+                    IsChecked="{Binding Frp.((cfg:ServerConfig)Config).AutoStart}" />
+            </ctrl:FormItem>
+        </ctrl:WrapFormItemGroup>
     </ScrollViewer>
 </v:ConfigPanelBase>
