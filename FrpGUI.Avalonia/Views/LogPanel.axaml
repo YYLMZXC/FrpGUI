@@ -7,9 +7,12 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:v="clr-namespace:FrpGUI.Avalonia.Views"
     xmlns:vm="using:FrpGUI.Avalonia.ViewModels"
+    Margin="0,-40,0,0"
+    Padding="0,40,0,0"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:LogViewModel"
+    Background="{DynamicResource Background1}"
     mc:Ignorable="d">
     <ListBox
         x:Name="lbx"
