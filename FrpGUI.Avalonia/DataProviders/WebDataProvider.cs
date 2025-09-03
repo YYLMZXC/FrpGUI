@@ -39,6 +39,11 @@ namespace FrpGUI.Avalonia.DataProviders
             StartTimer();
         }
 
+        public WebDataProvider(UIConfig config) : base(config)
+        {
+            this.config = config;
+        }
+
         public Task<ClientConfig> AddClientAsync()
         {
             return PostAsync(AddClientEndpoint, JContext.ClientConfig);
@@ -74,14 +79,15 @@ namespace FrpGUI.Avalonia.DataProviders
         public async Task<List<FrpStatusInfo>> GetFrpStatusesAsync()
         {
             var result = await GetObjectAsync(FrpStatusEndpoint, JContext.ListFrpStatusInfo);
-            return result;//.Select(p => new FrpStatusInfo(p)).ToList();
+            return result; //.Select(p => new FrpStatusInfo(p)).ToList();
         }
 
         private FrpAvaloniaSourceGenerationContext JContext => FrpAvaloniaSourceGenerationContext.Get();
 
         public Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter)
         {
-            return GetObjectAsync(LogsEndpoint, JContext.ListLogEntity, ("timeAfter", timeAfter.ToString("yyyy-MM-ddTHH:mm:ss.fffffff")));
+            return GetObjectAsync(LogsEndpoint, JContext.ListLogEntity,
+                ("timeAfter", timeAfter.ToString("yyyy-MM-ddTHH:mm:ss.fffffff")));
         }
 
         public Task<List<ProcessInfo>> GetSystemProcesses()
@@ -114,7 +120,9 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public Task SetTokenAsync(string oldToken, string newToken)
         {
-            return PostAsync($"{TokenEndpoint}?oldToken={WebUtility.UrlEncode(oldToken ?? "")}&newToken={WebUtility.UrlEncode(newToken)}", JContext.TokenVerification);
+            return PostAsync(
+                $"{TokenEndpoint}?oldToken={WebUtility.UrlEncode(oldToken ?? "")}&newToken={WebUtility.UrlEncode(newToken)}",
+                JContext.TokenVerification);
         }
 
         public Task StartFrpAsync(string id)

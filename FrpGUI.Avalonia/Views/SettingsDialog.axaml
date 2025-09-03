@@ -106,7 +106,7 @@
 
                     </ctrl:StackFormItemGroup>
                     <Button
-                        Command="{Binding RestartCommand}"
+                        Command="{Binding RestartAppCommand}"
                         Content="应用（需重启程序）" />
                 </StackPanel>
             </gb:GroupBox>

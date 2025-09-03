@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using FrpGUI.Enums;
 using FzLib.Application.Startup;
 using FzLib.Avalonia.Dialogs;
 
@@ -78,7 +79,7 @@ namespace FrpGUI.Avalonia.ViewModels
             }
             catch (Exception ex)
             {
-                await DialogService.ShowErrorDialogAsync("结束进程失败",ex);
+                await DialogService.ShowErrorDialogAsync("结束进程失败", ex);
             }
         }
 
@@ -99,7 +100,7 @@ namespace FrpGUI.Avalonia.ViewModels
         }
 
         [RelayCommand]
-        private async Task RestartAsync()
+        private async Task RestartAppAsync()
         {
             Config.ServerAddress = ServerAddress;
             if (!string.IsNullOrEmpty(Token))
@@ -115,12 +116,47 @@ namespace FrpGUI.Avalonia.ViewModels
             }
             else
             {
+                if (Config.RunningMode == RunningMode.Service)
+                {
+                    if (!await CheckServerAsync())
+                    {
+                        return;
+                    }
+                }
+
                 string exePath = Environment.ProcessPath;
                 Process.Start(new ProcessStartInfo(exePath)
                 {
                     UseShellExecute = true
                 });
                 await (App.Current as App).ShutdownAsync();
+            }
+        }
+
+        private async Task<bool> CheckServerAsync()
+        {
+            WebDataProvider provider = new WebDataProvider(Config);
+            try
+            {
+                var result = await provider.VerifyTokenAsync();
+                switch (result)
+                {
+                    case TokenVerification.OK:
+                        return true;
+                    case TokenVerification.NotEqual:
+                        await DialogService.ShowErrorDialogAsync("错误", "密码错误");
+                        return false;
+                    case TokenVerification.NeedSet:
+                        await DialogService.ShowErrorDialogAsync("错误", "请先设置服务端密码");
+                        return false;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+            catch (Exception ex)
+            {
+                await DialogService.ShowErrorDialogAsync("错误", "无法连接到服务器，" + ex.Message);
+                return false;
             }
         }
 
@@ -138,7 +174,7 @@ namespace FrpGUI.Avalonia.ViewModels
             }
             catch (Exception ex)
             {
-                await DialogService.ShowErrorDialogAsync("修改密码失败",ex);
+                await DialogService.ShowErrorDialogAsync("修改密码失败", ex);
             }
         }
     }

@@ -47,7 +47,13 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public async Task<T> GetObjectAsync<T>(string endpoint, JsonTypeInfo<T> jsonTypeInfo)
         {
-            using var responseStream = await (await GetAsync(endpoint)).ReadAsStreamAsync();
+            var obj = await GetAsync(endpoint);
+            if (obj == null)
+            {
+                //404，抛出错误
+                throw new Exception("请求的资源不存在（404 Not Found）");
+            }
+            using var responseStream = await obj.ReadAsStreamAsync();
             return await JsonSerializer.DeserializeAsync<T>(responseStream, jsonTypeInfo);
         }
 
