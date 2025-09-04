@@ -29,6 +29,7 @@ public partial class MainViewModel : ViewModelBase
     private readonly UIConfig config;
     private readonly LocalLogger logger;
     private readonly IStorageProviderService storage;
+
     [ObservableProperty]
     private bool activeProgressRingOverlay = true;
 
@@ -137,9 +138,18 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
+    [RelayCommand]
+    private void CancelChecking()
+    {
+        ActiveProgressRingOverlay = false;
+    }
+
+    [ObservableProperty]
+    private string progressRingMessage="正在初始化";
+    
     private async Task CheckNetworkAndToken()
     {
-    start:
+        start:
         if (config.RunningMode == RunningMode.Singleton)
         {
             return;
@@ -147,6 +157,7 @@ public partial class MainViewModel : ViewModelBase
 
         try
         {
+            ProgressRingMessage="正在验证服务器连接密钥";
             var result = await DataProvider.VerifyTokenAsync();
             string token;
             switch (result)
@@ -305,6 +316,7 @@ public partial class MainViewModel : ViewModelBase
     {
         return DialogService.ShowCustomDialogAsync(DialogFactory.CreateSettingsDialog());
     }
+
     [RelayCommand]
     private async Task RestartAsync()
     {

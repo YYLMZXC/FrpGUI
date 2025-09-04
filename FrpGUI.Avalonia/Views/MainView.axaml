@@ -5,6 +5,7 @@
     xmlns:b="using:FzLib.Avalonia.Behaviors"
     xmlns:c="clr-namespace:FrpGUI.Avalonia.Converters"
     xmlns:cf="clr-namespace:FrpGUI.Configs;assembly=FrpGUI.Core"
+    xmlns:controls="clr-namespace:FzLib.Avalonia.Controls;assembly=FzLib.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dialog="using:FzLib.Avalonia.Dialogs"
     xmlns:f="clr-namespace:FrpGUI;assembly=FrpGUI.Core"
@@ -111,13 +112,6 @@
             </Grid>
         </Grid>
 
-        <v:ControlBar
-            Grid.Column="2"
-            Grid.ColumnSpan="99">
-            <Interaction.Behaviors>
-                <b:WindowDragBehavior />
-            </Interaction.Behaviors>
-        </v:ControlBar>
         <Panel
             Grid.Row="1"
             Grid.Column="2"
@@ -125,6 +119,7 @@
             IsVisible="{Binding IsClientPanelVisible}">
             <v:ClientPanel DataContext="{Binding CurrentPanelViewModel}" />
         </Panel>
+
         <Panel
             Grid.Row="1"
             Grid.Column="2"
@@ -137,10 +132,21 @@
             Grid.Row="1"
             Grid.Column="4" />
 
-        <v:ProgressRingOverlay
-            x:Name="loading"
+        <v:ControlBar
+            Grid.Column="2"
+            Grid.ColumnSpan="99">
+            <Interaction.Behaviors>
+                <b:WindowDragBehavior />
+            </Interaction.Behaviors>
+        </v:ControlBar>
+
+        <controls:ProgressRingBoxOverlay
             Grid.RowSpan="99"
             Grid.ColumnSpan="99"
-            IsActive="{Binding ActiveProgressRingOverlay}" />
+            CanCancel="True"
+            CancelCommand="{Binding CancelCheckingCommand}"
+            Delay="0:0:0.2"
+            IsActive="{Binding ActiveProgressRingOverlay}"
+            Message="{Binding ProgressRingMessage}" />
     </Grid>
 </UserControl>

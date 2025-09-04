@@ -35,6 +35,7 @@
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Serilog" />
     <PackageReference Include="Xaml.Behaviors.Interactivity" />
+    <PackageReference Include="System.Reactive" />
     <!--<PackageReference Include="WebView.Avalonia" />-->
   </ItemGroup>
 
@@ -71,9 +72,6 @@
     </Compile>
     <Compile Update="Views\ControlBar.axaml.cs">
       <DependentUpon>ControlBar.axaml</DependentUpon>
-    </Compile>
-    <Compile Update="Views\ProgressRingOverlay.axaml.cs">
-      <DependentUpon>ProgressRingOverlay.axaml</DependentUpon>
     </Compile>
     <Compile Update="Views\SettingsDialog.axaml.cs">
       <DependentUpon>SettingsDialog.axaml</DependentUpon>

@@ -4,9 +4,9 @@
     <AppVersion>3.1.1</AppVersion>
 
     <!--Avalonia库版本-->
-    <AvaloniaVersion>11.3.4</AvaloniaVersion>
+    <AvaloniaVersion>11.3.5</AvaloniaVersion>
     <!--FzLib库版本-->
-    <FzLibVersion>3.0.9</FzLibVersion>
+    <FzLibVersion>3.0.10</FzLibVersion>
 
     <!--使用本地FzLib库。非作者使用时，应改为F-->
     <FzLocal>T</FzLocal>
