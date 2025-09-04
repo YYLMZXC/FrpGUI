@@ -149,7 +149,6 @@ public partial class MainViewModel : ViewModelBase
 
         try
         {
-            await Task.Delay(100000);
             var result = await DataProvider.VerifyTokenAsync();
             string token;
             switch (result)

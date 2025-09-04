@@ -63,7 +63,7 @@ public class ConfigController : FrpControllerBase
         logger.Info($"指令：应用配置", p.Config);
         if (p.Config.GetType() != config.GetType())
         {
-            throw new StatusBasedException("提供的配置与已有配置类型不同", System.Net.HttpStatusCode.BadRequest);
+            throw new HttpStatusCodeException("提供的配置与已有配置类型不同", System.Net.HttpStatusCode.BadRequest);
         }
         //需要指定实际的类型，不然只会Adapt基类属性
         if (config is ClientConfig c)

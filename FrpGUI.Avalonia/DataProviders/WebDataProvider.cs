@@ -13,6 +13,8 @@ namespace FrpGUI.Avalonia.DataProviders
 {
     public class WebDataProvider : HttpRequester, IDataProvider
     {
+        private const string AuthorizationKey = "Authorization";
+
         private const string AddClientEndpoint = "Config/FrpConfigs/Add/Client";
         private const string AddServerEndpoint = "Config/FrpConfigs/Add/Server";
         private const string DeleteFrpConfigsEndpoint = "Config/FrpConfigs/Delete";
@@ -30,17 +32,58 @@ namespace FrpGUI.Avalonia.DataProviders
         private readonly LocalLogger logger;
         private PeriodicTimer timer;
 
+
+        private void WriteAuthorizationHeader()
+        {
+            if (string.IsNullOrWhiteSpace(config.ServerToken))
+            {
+                return;
+            }
+
+            if (httpClient.DefaultRequestHeaders.TryGetValues(AuthorizationKey, out IEnumerable<string> values))
+            {
+                var count = values.Count();
+                if (count >= 1)
+                {
+                    if (values.First() == config.ServerToken)
+                    {
+                        return;
+                    }
+
+                    httpClient.DefaultRequestHeaders.Remove(AuthorizationKey);
+                    httpClient.DefaultRequestHeaders.Add(AuthorizationKey, config.ServerToken);
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            else
+            {
+                httpClient.DefaultRequestHeaders.Add(AuthorizationKey, config.ServerToken);
+            }
+        }
+
         private List<(string Name, Func<Task> task)> timerTasks = new List<(string Name, Func<Task> task)>();
 
-        public WebDataProvider(UIConfig config, LocalLogger logger) : base(config)
+        public WebDataProvider(UIConfig config, LocalLogger logger)
         {
+            httpClient.Timeout = TimeSpan.FromSeconds(5);
             this.config = config;
             this.logger = logger;
             StartTimer();
         }
 
-        public WebDataProvider(UIConfig config) : base(config)
+        protected override string BaseUrl => config.ServerAddress;
+
+        protected override void OnSending()
         {
+            WriteAuthorizationHeader();
+        }
+
+        public WebDataProvider(UIConfig config)
+        {
+            httpClient.Timeout = TimeSpan.FromSeconds(5);
             this.config = config;
         }
 

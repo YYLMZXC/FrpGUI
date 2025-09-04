@@ -35,7 +35,7 @@ public class FrpGUIActionFilter(AppConfig config) : IActionFilter
     {
         if (context.Exception != null)
         {
-            if (context.Exception is StatusBasedException sbe)
+            if (context.Exception is HttpStatusCodeException sbe)
             {
                 if (string.IsNullOrEmpty(sbe.Message))
                 {
