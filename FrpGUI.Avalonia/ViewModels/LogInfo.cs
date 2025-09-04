@@ -11,7 +11,7 @@ public partial class LogInfo(LogEntity e) : ObservableObject
 {
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(HasUpdated))]
-    public int updateTimes;
+    private int updateTimes=1;
 
     [ObservableProperty]
     private bool fromFrp = e.FromFrp;
@@ -31,5 +31,5 @@ public partial class LogInfo(LogEntity e) : ObservableObject
     [ObservableProperty]
     private IBrush typeBrush;
 
-    public bool HasUpdated => UpdateTimes > 0;
+    public bool HasUpdated => UpdateTimes > 1;
 }

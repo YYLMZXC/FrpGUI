@@ -18,6 +18,7 @@ using FrpGUI.Avalonia.Views;
 using FrpGUI.Configs;
 using FrpGUI.Enums;
 using FrpGUI.Models;
+using FzLib.Avalonia.Controls;
 using FzLib.Avalonia.Dialogs;
 using FzLib.Avalonia.Dialogs.Pickers;
 using FzLib.Avalonia.Services;
@@ -27,11 +28,9 @@ namespace FrpGUI.Avalonia.ViewModels;
 public partial class MainViewModel : ViewModelBase
 {
     private readonly UIConfig config;
+    private readonly IProgressOverlayService progressOverlayService;
     private readonly LocalLogger logger;
     private readonly IStorageProviderService storage;
-
-    [ObservableProperty]
-    private bool activeProgressRingOverlay = true;
 
     [ObservableProperty]
     private IFrpProcess currentFrpProcess;
@@ -58,10 +57,12 @@ public partial class MainViewModel : ViewModelBase
         IStorageProviderService storage,
         UIConfig config,
         FrpConfigViewModel frpConfigViewModel,
+        IProgressOverlayService progressOverlayService,
         LocalLogger logger) : base(provider, dialogService, dialogFactory)
     {
         this.storage = storage;
         this.config = config;
+        this.progressOverlayService = progressOverlayService;
         InitializeDataAndStartTimer();
         CurrentPanelViewModel = frpConfigViewModel;
         this.logger = logger;
@@ -138,15 +139,6 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    [RelayCommand]
-    private void CancelChecking()
-    {
-        ActiveProgressRingOverlay = false;
-    }
-
-    [ObservableProperty]
-    private string progressRingMessage="正在初始化";
-    
     private async Task CheckNetworkAndToken()
     {
         start:
@@ -157,7 +149,7 @@ public partial class MainViewModel : ViewModelBase
 
         try
         {
-            ProgressRingMessage="正在验证服务器连接密钥";
+            await Task.Delay(100000);
             var result = await DataProvider.VerifyTokenAsync();
             string token;
             switch (result)
@@ -275,8 +267,13 @@ public partial class MainViewModel : ViewModelBase
 
     private async void InitializeDataAndStartTimer()
     {
-        await CheckNetworkAndToken();
-        ActiveProgressRingOverlay = false;
+        await progressOverlayService.WithOverlayAsync(CheckNetworkAndToken,
+            () =>
+            {
+                progressOverlayService.SetVisible(false);
+                return Task.CompletedTask;
+            },
+            "正在连接服务器");
         try
         {
             FrpProcesses = new ObservableCollection<IFrpProcess>(await DataProvider.GetFrpStatusesAsync());

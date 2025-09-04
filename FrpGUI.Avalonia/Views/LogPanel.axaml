@@ -40,6 +40,8 @@
             <DataTemplate>
                 <Grid Width="220">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="8" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="8" />
                         <ColumnDefinition Width="Auto" />
@@ -50,6 +52,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <StackPanel
+                        Grid.Column="2"
                         VerticalAlignment="Center"
                         Opacity="0.75"
                         Orientation="Horizontal"
@@ -64,6 +67,7 @@
                     </StackPanel>
                     <TextBlock
                         Grid.Row="1"
+                        Grid.Column="2"
                         Margin="0,0,4,0"
                         VerticalAlignment="Center"
                         IsVisible="{Binding InstanceName, Converter={x:Static cvt:Converters.IsNotNull}}"
@@ -71,16 +75,15 @@
                         Text="{Binding InstanceName}"
                         TextWrapping="NoWrap" />
                     <Ellipse
-                        Grid.Row="2"
+                        Grid.RowSpan="3"
                         Width="6"
                         Height="6"
-                        Margin="-12,8,0,0"
                         HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
+                        VerticalAlignment="Center"
                         Fill="{Binding TypeBrush}" />
                     <Border
                         Grid.RowSpan="2"
-                        Grid.Column="2"
+                        Grid.Column="4"
                         Padding="4"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
@@ -92,7 +95,8 @@
                     </Border>
                     <TextBlock
                         Grid.Row="2"
-                        Grid.ColumnSpan="9"
+                        Grid.Column="2"
+                        Grid.ColumnSpan="3"
                         Margin="0,0,4,0"
                         Text="{Binding Message}"
                         TextWrapping="Wrap" />

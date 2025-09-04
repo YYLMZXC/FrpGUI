@@ -141,12 +141,10 @@
         </v:ControlBar>
 
         <controls:ProgressRingBoxOverlay
+            x:Name="ring"
             Grid.RowSpan="99"
             Grid.ColumnSpan="99"
             CanCancel="True"
-            CancelCommand="{Binding CancelCheckingCommand}"
-            Delay="0:0:0.2"
-            IsActive="{Binding ActiveProgressRingOverlay}"
-            Message="{Binding ProgressRingMessage}" />
+            Delay="0:0:0.2" />
     </Grid>
 </UserControl>

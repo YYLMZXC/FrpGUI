@@ -122,6 +122,7 @@ public partial class App : Application
         builder.Services.AddDialogService();
         builder.Services.AddClipboardService();
         builder.Services.AddStorageProviderService();
+        builder.Services.AddProgressOverlayService();
 
         switch (uiconfig.RunningMode)
         {
