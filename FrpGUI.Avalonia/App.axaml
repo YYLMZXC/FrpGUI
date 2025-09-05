@@ -8,11 +8,11 @@
 
     <Application.Styles>
         <FluentTheme />
+        <fz:FzLibAvaloniaStyles />
     </Application.Styles>
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <fz:FzLibAvaloniaStyles />
                 <ResourceInclude Source="/Brushes.axaml" />
             </ResourceDictionary.MergedDictionaries>
             <c:NullableValueConverter x:Key="NullableValueConverter" />

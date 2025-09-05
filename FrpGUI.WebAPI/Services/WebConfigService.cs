@@ -1,4 +1,6 @@
-﻿namespace FrpGUI.WebAPI.Services
+﻿using FzLib.Net;
+
+namespace FrpGUI.WebAPI.Services
 {
     public class WebConfigService(IConfiguration config)
     {

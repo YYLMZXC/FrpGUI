@@ -135,13 +135,16 @@
 
             <Button Command="{Binding BrowseAdminCommand}">
                 <Button.IsEnabled>
-                    <Binding
-                        Converter="{x:Static cvt:Converters.EqualWithParameter}"
-                        Path="CurrentFrpProcess.ProcessStatus">
-                        <Binding.ConverterParameter>
-                            <e:ProcessStatus>Running</e:ProcessStatus>
-                        </Binding.ConverterParameter>
-                    </Binding>
+                    <MultiBinding Converter="{x:Static cvt:Converters.AndLogic}">
+                        <Binding
+                            Converter="{x:Static cvt:Converters.EqualWithParameter}"
+                            Path="CurrentFrpProcess.ProcessStatus">
+                            <Binding.ConverterParameter>
+                                <e:ProcessStatus>Running</e:ProcessStatus>
+                            </Binding.ConverterParameter>
+                        </Binding>
+                        <Binding Path="CurrentFrpProcess.Config.EnableDashBoard" />
+                    </MultiBinding>
                 </Button.IsEnabled>
                 <StackPanel
                     Orientation="Horizontal"

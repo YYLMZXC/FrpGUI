@@ -9,6 +9,9 @@ namespace FrpGUI.Models
     {
         [ObservableProperty]
         private bool autoStart;
+        
+        [ObservableProperty]
+        private bool enableDashBoard;
 
         [ObservableProperty]
         private string dashBoardAddress = "localhost";
@@ -38,8 +41,7 @@ namespace FrpGUI.Models
 
         public virtual object Clone()
         {
-            var newItem = MemberwiseClone() as FrpConfigBase;
-            return newItem;
+            return MemberwiseClone();
         }
 
         public abstract string ToToml();
@@ -47,6 +49,7 @@ namespace FrpGUI.Models
         public virtual void Adapt(FrpConfigBase config)
         {
             config.AutoStart = AutoStart;
+            config.EnableDashBoard = EnableDashBoard;
             config.DashBoardPassword = DashBoardPassword;
             config.DashBoardPort = DashBoardPort;
             config.DashBoardUsername = DashBoardUsername;

@@ -97,7 +97,7 @@ public partial class App : Application
         //Windows上使用微软雅黑
         if (OperatingSystem.IsWindows())
         {
-            Resources.Add("ContentControlThemeFontFamily", new FontFamily("Microsoft YaHei"));
+            Resources.Add("ContentControlThemeFontFamily", new FontFamily("Microsoft YaHei UI"));
         }
 
         //浏览器端需要设置内置字体才可正常显示中文

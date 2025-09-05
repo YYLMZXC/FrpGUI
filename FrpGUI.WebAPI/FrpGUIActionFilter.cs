@@ -3,6 +3,7 @@ using FrpGUI.WebAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Reflection;
+using FzLib.Net;
 
 namespace FrpGUI.WebAPI;
 

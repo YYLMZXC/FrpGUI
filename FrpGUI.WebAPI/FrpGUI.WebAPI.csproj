@@ -45,4 +45,10 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="FzLib">
+      <HintPath>..\..\FzLib\Publish\libs\FzLib.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

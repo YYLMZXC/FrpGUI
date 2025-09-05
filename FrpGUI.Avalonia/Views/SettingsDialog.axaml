@@ -8,7 +8,6 @@
     xmlns:cvt="using:FzLib.Avalonia.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dialog="using:FzLib.Avalonia.Dialogs"
-    xmlns:gb="using:GroupBox.Avalonia.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:me="using:FzLib.Avalonia.MarkupExtensions"
     xmlns:r="using:FrpGUI.Avalonia"
@@ -30,7 +29,9 @@
         <StackPanel
             Orientation="Vertical"
             Spacing="8">
-            <gb:GroupBox Header="运行模式">
+            <HeaderedContentControl
+                Classes="GroupBox"
+                Header="运行模式">
                 <StackPanel
                     Orientation="Vertical"
                     Spacing="8">
@@ -109,8 +110,10 @@
                         Command="{Binding RestartAppCommand}"
                         Content="应用（需重启程序）" />
                 </StackPanel>
-            </gb:GroupBox>
-            <gb:GroupBox Header="托盘图标">
+            </HeaderedContentControl>
+            <HeaderedContentControl
+                Classes="GroupBox"
+                Header="托盘图标">
                 <StackPanel
                     Orientation="Vertical"
                     Spacing="8">
@@ -127,8 +130,10 @@
                         <Run>退出程序对服务端运行的frp没有影响</Run>
                     </TextBlock>
                 </StackPanel>
-            </gb:GroupBox>
-            <gb:GroupBox Header="正在运行的进程">
+            </HeaderedContentControl>
+            <HeaderedContentControl
+                Classes="GroupBox"
+                Header="正在运行的进程">
                 <StackPanel Spacing="8">
                     <ItemsControl
                         BorderBrush="Gray"
@@ -174,7 +179,7 @@
                         Opacity="0.5"
                         Text="没有正在运行的进程" />
                 </StackPanel>
-            </gb:GroupBox>
+            </HeaderedContentControl>
 
         </StackPanel>
     </ScrollViewer>

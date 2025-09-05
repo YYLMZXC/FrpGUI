@@ -31,19 +31,25 @@ namespace FrpGUI.Models
         {
             StringBuilder str = new StringBuilder();
             str.Append("bindPort = ").Append(Port).AppendLine();
-            str.Append("webServer.addr = ").Append('"').Append(DashBoardAddress).Append('"').AppendLine();
-            str.Append("webServer.port = ").Append(DashBoardPort).AppendLine();
-            str.Append("webServer.user = ").Append('"').Append(DashBoardUsername).Append('"').AppendLine();
-            str.Append("webServer.password  = ").Append('"').Append(DashBoardPassword).Append('"').AppendLine();
 
-            if (HttpPort.HasValue && HttpPort.Value > 0)
+            if (EnableDashBoard)
+            {
+                str.Append("webServer.addr = ").Append('"').Append(DashBoardAddress).Append('"').AppendLine();
+                str.Append("webServer.port = ").Append(DashBoardPort).AppendLine();
+                str.Append("webServer.user = ").Append('"').Append(DashBoardUsername).Append('"').AppendLine();
+                str.Append("webServer.password  = ").Append('"').Append(DashBoardPassword).Append('"').AppendLine();
+            }
+
+            if (HttpPort is > 0)
             {
                 str.Append("vhostHTTPPort = ").Append(HttpPort.Value).AppendLine();
             }
-            if (HttpsPort.HasValue && HttpsPort.Value > 0)
+
+            if (HttpsPort is > 0)
             {
                 str.Append("vhostHTTPSPort = ").Append(HttpsPort.Value).AppendLine();
             }
+
             if (!string.IsNullOrWhiteSpace(Token))
             {
                 str.Append("auth.token = ").Append('"').Append(Token).Append('"').AppendLine();
@@ -62,6 +68,7 @@ namespace FrpGUI.Models
             {
                 throw new ArgumentException("必须为" + nameof(ServerConfig));
             }
+
             // 复制 ServerConfig 特有的属性
             serverConfig.HttpPort = HttpPort;
             serverConfig.HttpsPort = HttpsPort;

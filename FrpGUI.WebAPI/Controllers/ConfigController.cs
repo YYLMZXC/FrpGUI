@@ -2,6 +2,7 @@
 using FrpGUI.Models;
 using FrpGUI.Services;
 using FrpGUI.WebAPI.Services;
+using FzLib.Net;
 using Mapster;
 using Microsoft.AspNetCore.Mvc;
 
