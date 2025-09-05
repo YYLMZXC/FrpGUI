@@ -2,6 +2,7 @@
 using FrpGUI.Avalonia.ViewModels;
 using FrpGUI.Enums;
 using FrpGUI.Models;
+using FzLib.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,7 +131,7 @@ namespace FrpGUI.Avalonia.DataProviders
         public Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter)
         {
             return GetObjectAsync(LogsEndpoint, JContext.ListLogEntity,
-                ("timeAfter", timeAfter.ToString("yyyy-MM-ddTHH:mm:ss.fffffff")));
+                [("timeAfter", timeAfter.ToString("yyyy-MM-ddTHH:mm:ss.fffffff"))]);
         }
 
         public Task<List<ProcessInfo>> GetSystemProcesses()

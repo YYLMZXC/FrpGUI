@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using FzLib.Net;
+using System.Diagnostics;
 
 namespace FrpGUI.Models
 {

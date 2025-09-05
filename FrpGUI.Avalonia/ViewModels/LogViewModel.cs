@@ -20,7 +20,7 @@ public partial class LogViewModel : ViewModelBase
     private LogInfo selectedLog;
 
     public LogViewModel(IDataProvider provider, IClipboardService clipboard, UIConfig config, LocalLogger logger) :
-        base(provider,null,null)
+        base(provider, null, null)
     {
         this.clipboard = clipboard;
         this.config = config;
@@ -30,7 +30,7 @@ public partial class LogViewModel : ViewModelBase
 
     public ObservableCollection<LogInfo> Logs { get; } = new ObservableCollection<LogInfo>();
 
-    public void AddLog(LogEntity e)
+    public void AddLog(LogEntity e, bool select)
     {
         try
         {
@@ -69,7 +69,10 @@ public partial class LogViewModel : ViewModelBase
             };
 
             Logs.Add(log);
-            SelectedLog = log;
+            if (select)
+            {
+                SelectedLog = log;
+            }
         }
         catch (Exception ex)
         {
@@ -95,17 +98,22 @@ public partial class LogViewModel : ViewModelBase
                     lastRequestTime = logs[^1].Time;
                     foreach (var log in logs)
                     {
-                        AddLog(log);
+                        AddLog(log, false);
                     }
+                    SelectedLog = Logs[^1];
                 }
             });
         }
 
-        logger.NewLog += (s, e) => AddLog(e.Log);
+        logger.NewLog += (s, e) => AddLog(e.Log, true);
         logger.SaveLogs = false;
         foreach (var log in logger.GetSavedLogs())
         {
-            AddLog(log);
+            AddLog(log, false);
+        }
+        if (Logs.Count > 0)
+        {
+            SelectedLog = Logs[^1];
         }
     }
 }
