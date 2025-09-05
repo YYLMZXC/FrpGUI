@@ -145,6 +145,7 @@
             Grid.RowSpan="99"
             Grid.ColumnSpan="99"
             CanCancel="True"
-            Delay="0:0:0.2" />
+            Delay="0:0:0.2"
+            IsActive="False" />
     </Grid>
 </UserControl>

@@ -141,37 +141,60 @@ public partial class MainViewModel : ViewModelBase
 
     private async Task CheckNetworkAndToken()
     {
-        start:
         if (config.RunningMode == RunningMode.Singleton)
         {
             return;
         }
 
-        try
-        {
-            var result = await DataProvider.VerifyTokenAsync();
-            string token;
-            switch (result)
+        string errorTitle = null;
+        string errorMessage = null;
+        bool cancelCheck = false;
+        await progressOverlayService.WithOverlayAsync(async () =>
             {
-                case TokenVerification.OK:
-                    return;
+                try
+                {
+                    var result = await DataProvider.VerifyTokenAsync();
+                    string token;
+                    switch (result)
+                    {
+                        case TokenVerification.OK:
+                            return;
 
-                case TokenVerification.NotEqual:
-                    await DialogService.ShowErrorDialogAsync("密码验证错误", "密码不正确，请重新设置密码");
-                    await OpenSettingsDialogAsync();
-                    goto start;
+                        case TokenVerification.NotEqual:
+                            errorTitle = "密码验证错误";
+                            errorMessage = "密码不正确，请重新设置密码";
+                            break;
 
-                case TokenVerification.NeedSet:
-                    await DialogService.ShowErrorDialogAsync("密码为空", "服务端密码为空，请先设置密码");
-                    await OpenSettingsDialogAsync();
-                    goto start;
-            }
-        }
-        catch (Exception ex)
+                        case TokenVerification.NeedSet:
+                            errorTitle = "密码为空";
+                            errorMessage = "服务端密码为空，请先设置密码";
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    errorTitle = "网络错误";
+                    errorMessage = ex.Message;
+                }
+            },
+            () =>
+            {
+                cancelCheck = true;
+                progressOverlayService.SetVisible(false);
+                return Task.CompletedTask;
+            },
+            "正在连接服务器");
+
+        if (cancelCheck)
         {
-            await DialogService.ShowErrorDialogAsync("网络错误，无法连接到FrpGUI服务端", ex);
+            return;
+        }
+
+        if (errorTitle != null)
+        {
+            await DialogService.ShowErrorDialogAsync(errorTitle, errorMessage);
             await OpenSettingsDialogAsync();
-            goto start;
+            //修改后的设置对话框，在未连接到服务器前，无法关闭
         }
     }
 
@@ -266,13 +289,7 @@ public partial class MainViewModel : ViewModelBase
 
     private async void InitializeDataAndStartTimer()
     {
-        await progressOverlayService.WithOverlayAsync(CheckNetworkAndToken,
-            () =>
-            {
-                progressOverlayService.SetVisible(false);
-                return Task.CompletedTask;
-            },
-            "正在连接服务器");
+        await CheckNetworkAndToken();
         try
         {
             FrpProcesses = new ObservableCollection<IFrpProcess>(await DataProvider.GetFrpStatusesAsync());

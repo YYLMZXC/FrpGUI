@@ -99,31 +99,32 @@ namespace FrpGUI.Avalonia.ViewModels
             }
         }
 
-        [RelayCommand]
-        private async Task RestartAppAsync()
+        public async Task<bool> TryCloseAsync()
         {
             Config.ServerAddress = ServerAddress;
-            if (!string.IsNullOrEmpty(Token))
+            if (!string.IsNullOrEmpty(Token)) //如果密码修改了
             {
                 Config.ServerToken = Token;
             }
 
             Config.Save();
 
+            return Config.RunningMode != RunningMode.Service || await CheckServerAsync();
+        }
+
+        [RelayCommand]
+        private async Task SwitchRunningModeAsync()
+        {
+            Config.RunningMode = Config.RunningMode == RunningMode.Singleton
+                ? RunningMode.Service
+                : RunningMode.Singleton;
+            Config.Save();
             if (OperatingSystem.IsBrowser())
             {
                 JsInterop.Reload();
             }
             else
             {
-                if (Config.RunningMode == RunningMode.Service)
-                {
-                    if (!await CheckServerAsync())
-                    {
-                        return;
-                    }
-                }
-
                 string exePath = Environment.ProcessPath;
                 Process.Start(new ProcessStartInfo(exePath)
                 {
@@ -155,7 +156,7 @@ namespace FrpGUI.Avalonia.ViewModels
             }
             catch (Exception ex)
             {
-                await DialogService.ShowErrorDialogAsync("错误", "无法连接到服务器，" + ex.Message);
+                await DialogService.ShowErrorDialogAsync("错误", "无法连接到服务器：" + ex.Message);
                 return false;
             }
         }

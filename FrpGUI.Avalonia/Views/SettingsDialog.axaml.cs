@@ -11,8 +11,16 @@ public partial class SettingsDialog : DialogHost
         InitializeComponent();
     }
 
-    protected override void OnCloseButtonClick()
+    protected override async void OnCloseButtonClick()
     {
-        Close();
+        CloseButtonEnable = false;
+        if (await ((SettingViewModel)DataContext).TryCloseAsync())
+        {
+          Close();  
+        }
+        else
+        {
+            CloseButtonEnable = true;
+        }
     }
 }

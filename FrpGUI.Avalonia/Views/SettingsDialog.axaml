@@ -19,11 +19,12 @@
     Height="540"
     Padding="4"
     x:DataType="vm:SettingViewModel"
-    CloseButtonContent="关闭"
+    CloseButtonContent="完成"
     mc:Ignorable="d">
 
     <ScrollViewer
         HorizontalScrollBarVisibility="Disabled"
+        IsEnabled="{Binding $parent[dialog:DialogHost].CloseButtonEnable}"
         VerticalScrollBarVisibility="Auto">
 
         <StackPanel
@@ -55,6 +56,29 @@
                         </ComboBox.ItemTemplate>
                     </ComboBox>
 
+                    <StackPanel
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <StackPanel.Resources>
+                            <cvt:ValueMappingConverter
+                                x:Key="InverseRunningModeValueMappingConverter"
+                                Map="{me:StringToDictionary Service:单机模式;Singleton:服务模式}" />
+
+                        </StackPanel.Resources>
+                        <TextBlock VerticalAlignment="Center">
+                            <Run FontWeight="Bold">当前运行模式：</Run>
+                            <Run Text="{Binding Config.RunningMode, Converter={x:Static cvt:Converters.Description}}" />
+                        </TextBlock>
+                        <Button
+                            Classes="Link"
+                            Command="{Binding SwitchRunningModeCommand}">
+                            <TextBlock>
+                                <Run Text="切换到" />
+                                <Run Text="{Binding Config.RunningMode, Converter={StaticResource InverseRunningModeValueMappingConverter}}" />
+                                <Run Text="（需重启应用）" />
+                            </TextBlock>
+                        </Button>
+                    </StackPanel>
                     <ctrl:StackFormItemGroup
                         IsVisible="{Binding Config.RunningMode, Converter={x:Static cvt:Converters.EqualWithParameter}, ConverterParameter=Service}"
                         LabelWidth="128">
@@ -70,7 +94,7 @@
                                     Text="{Binding Token}"
                                     Watermark="服务端的连接密码" />
                                 <Button
-                                    Grid.Column="4"
+                                    Grid.Column="2"
                                     Content="修改密码">
                                     <Button.Flyout>
                                         <Flyout>
@@ -106,9 +130,6 @@
                             OnContent="开机自启" />
 
                     </ctrl:StackFormItemGroup>
-                    <Button
-                        Command="{Binding RestartAppCommand}"
-                        Content="应用（需重启程序）" />
                 </StackPanel>
             </HeaderedContentControl>
             <HeaderedContentControl
