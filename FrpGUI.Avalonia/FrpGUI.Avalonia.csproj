@@ -33,6 +33,7 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
     <PackageReference Include="Microsoft.Extensions.Hosting" />
     <PackageReference Include="Serilog" />
+    <PackageReference Include="Xaml.Behaviors.Avalonia" />
     <PackageReference Include="Xaml.Behaviors.Interactivity" />
     <PackageReference Include="System.Reactive" />
     <!--<PackageReference Include="WebView.Avalonia" />-->
