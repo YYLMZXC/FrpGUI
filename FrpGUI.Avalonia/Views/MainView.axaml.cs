@@ -13,9 +13,17 @@ namespace FrpGUI.Avalonia.Views;
 
 public partial class MainView : UserControl
 {
-    public MainView( )
+    public MainView()
     {
         InitializeComponent();
         App.Services.GetRequiredService<IProgressOverlayService>().Register(ring);
+    }
+
+    protected override void OnLoaded(RoutedEventArgs e)
+    {
+        base.OnLoaded(e);
+        //不知道为什么，Linux无法找到TopLevel，因此强制指定
+        App.Services.GetRequiredService<IDialogService>().DefaultOwner =
+            TopLevel.GetTopLevel(this) ?? throw new InvalidOperationException("找不到当前的顶层");
     }
 }

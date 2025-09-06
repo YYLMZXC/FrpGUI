@@ -64,7 +64,6 @@ public partial class MainViewModel : ViewModelBase
         this.storage = storage;
         this.config = config;
         this.progressOverlayService = progressOverlayService;
-        InitializeDataAndStartTimer();
         CurrentPanelViewModel = frpConfigViewModel;
         this.logger = logger;
     }
@@ -293,7 +292,8 @@ public partial class MainViewModel : ViewModelBase
         }
     }
 
-    private async void InitializeDataAndStartTimer()
+    [RelayCommand]
+    private async Task InitializeDataAndStartTimerAsync()
     {
         await CheckNetworkAndToken();
         try

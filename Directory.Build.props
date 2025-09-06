@@ -11,8 +11,8 @@
     <!--使用本地FzLib库。非作者使用时，应改为F-->
     <FzLocal>T</FzLocal>
 
-    <!--在非Windows上开发，设置临时文件夹目录-->
-    <!--<Temp>/home/username/temp</Temp>-->
+    <!--在Windows上开发，可以设置输出到临时文件夹-->
+    <OutputToTempDir>T</OutputToTempDir>
   </PropertyGroup>
 
   <PropertyGroup>
