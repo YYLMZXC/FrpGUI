@@ -21,11 +21,12 @@ class Program
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()
             .WriteTo.File("logs/logs.txt", rollingInterval: RollingInterval.Day)
+            .WriteTo.Console()
             .CreateLogger();
         Log.Information("程序启动");
 
         UnhandledExceptionCatcher.WithCatcher(() => BuildAvaloniaApp().StartWithClassicDesktopLifetime(args))
-            .Catch((e, s) => { Log.Fatal("未捕获的异常", e); })
+            .Catch((e, s) => { Log.Fatal(e, "未捕获的异常"); })
             .Finally(Log.CloseAndFlush)
             .Run();
     }

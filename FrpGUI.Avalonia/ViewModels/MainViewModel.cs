@@ -22,6 +22,7 @@ using FzLib.Avalonia.Controls;
 using FzLib.Avalonia.Dialogs;
 using FzLib.Avalonia.Dialogs.Pickers;
 using FzLib.Avalonia.Services;
+using Serilog;
 
 namespace FrpGUI.Avalonia.ViewModels;
 
@@ -149,6 +150,7 @@ public partial class MainViewModel : ViewModelBase
         string errorTitle = null;
         string errorMessage = null;
         bool cancelCheck = false;
+        
         await progressOverlayService.WithOverlayAsync(async () =>
             {
                 try
@@ -158,14 +160,17 @@ public partial class MainViewModel : ViewModelBase
                     switch (result)
                     {
                         case TokenVerification.OK:
+                            Log.Logger.Information("服务验证通过");
                             return;
 
                         case TokenVerification.NotEqual:
+                            Log.Logger.Warning("服务密码验证错误");
                             errorTitle = "密码验证错误";
                             errorMessage = "密码不正确，请重新设置密码";
                             break;
 
                         case TokenVerification.NeedSet:
+                            Log.Logger.Warning("服务密码为空格");
                             errorTitle = "密码为空";
                             errorMessage = "服务端密码为空，请先设置密码";
                             break;
@@ -173,6 +178,7 @@ public partial class MainViewModel : ViewModelBase
                 }
                 catch (Exception ex)
                 {
+                    Log.Logger.Warning(ex,"服务网络错误");
                     errorTitle = "网络错误";
                     errorMessage = ex.Message;
                 }

@@ -7,13 +7,20 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:v="clr-namespace:FrpGUI.Avalonia.Views"
     xmlns:vm="using:FrpGUI.Avalonia.ViewModels"
-    Margin="0,-40,0,0"
-    Padding="0,40,0,0"
+    Margin="{OnPlatform {StaticResource ZeroThickness},
+                        Windows={StaticResource WindowsMargin}}"
+    Padding="{OnPlatform {StaticResource ZeroThickness},
+                         Windows={StaticResource WindowsPadding}}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:LogViewModel"
     Background="{DynamicResource Background1}"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <Thickness x:Key="ZeroThickness">0,0,0,0</Thickness>
+        <Thickness x:Key="WindowsMargin">0,-40,0,0</Thickness>
+        <Thickness x:Key="WindowsPadding">0,40,0,0</Thickness>
+    </UserControl.Resources>
     <ListBox
         x:Name="lbx"
         AutoScrollToSelectedItem="True"

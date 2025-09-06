@@ -89,8 +89,9 @@ try {
         
         # 如果目标平台与当前平台匹配，则启用AOT
         $aotFlag = if ($runtime -eq $currentPlatform) { "/p:PublishAot=true" } else { "/p:PublishAot=false" }
+        $singleFileFlag = if ($runtime -eq $currentPlatform) { "/p:PublishSingleFile=false" } else { "/p:PublishSingleFile=true" }
 
-        dotnet publish FrpGUI.Avalonia.Desktop -r $runtime -c Release -o $outputDirectory --self-contained true $aotFlag #/p:PublishSingleFile=true 
+        dotnet publish FrpGUI.Avalonia.Desktop -r $runtime -c Release -o $outputDirectory --self-contained true $aotFlag $singleFileFlag
 
         $platform = switch ($runtime) {
             "win-x64" { "windows_amd64" }
