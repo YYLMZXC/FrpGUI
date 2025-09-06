@@ -2,6 +2,7 @@
 using FrpGUI.Avalonia.ViewModels;
 using FrpGUI.Enums;
 using FrpGUI.Models;
+using FzLib.Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace FrpGUI.Avalonia.DataProviders
 {
     public class WebDataProvider : HttpRequester, IDataProvider
     {
+        private const string AuthorizationKey = "Authorization";
+
         private const string AddClientEndpoint = "Config/FrpConfigs/Add/Client";
         private const string AddServerEndpoint = "Config/FrpConfigs/Add/Server";
         private const string DeleteFrpConfigsEndpoint = "Config/FrpConfigs/Delete";
@@ -30,13 +33,59 @@ namespace FrpGUI.Avalonia.DataProviders
         private readonly LocalLogger logger;
         private PeriodicTimer timer;
 
+
+        private void WriteAuthorizationHeader()
+        {
+            if (string.IsNullOrWhiteSpace(config.ServerToken))
+            {
+                return;
+            }
+
+            if (httpClient.DefaultRequestHeaders.TryGetValues(AuthorizationKey, out IEnumerable<string> values))
+            {
+                var count = values.Count();
+                if (count >= 1)
+                {
+                    if (values.First() == config.ServerToken)
+                    {
+                        return;
+                    }
+
+                    httpClient.DefaultRequestHeaders.Remove(AuthorizationKey);
+                    httpClient.DefaultRequestHeaders.Add(AuthorizationKey, config.ServerToken);
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
+            else
+            {
+                httpClient.DefaultRequestHeaders.Add(AuthorizationKey, config.ServerToken);
+            }
+        }
+
         private List<(string Name, Func<Task> task)> timerTasks = new List<(string Name, Func<Task> task)>();
 
-        public WebDataProvider(UIConfig config, LocalLogger logger) : base(config)
+        public WebDataProvider(UIConfig config, LocalLogger logger)
         {
+            httpClient.Timeout = TimeSpan.FromSeconds(5);
             this.config = config;
             this.logger = logger;
             StartTimer();
+        }
+
+        protected override string BaseUrl => config.ServerAddress;
+
+        protected override void OnSending()
+        {
+            WriteAuthorizationHeader();
+        }
+
+        public WebDataProvider(UIConfig config)
+        {
+            httpClient.Timeout = TimeSpan.FromSeconds(5);
+            this.config = config;
         }
 
         public Task<ClientConfig> AddClientAsync()
@@ -74,14 +123,15 @@ namespace FrpGUI.Avalonia.DataProviders
         public async Task<List<FrpStatusInfo>> GetFrpStatusesAsync()
         {
             var result = await GetObjectAsync(FrpStatusEndpoint, JContext.ListFrpStatusInfo);
-            return result;//.Select(p => new FrpStatusInfo(p)).ToList();
+            return result; //.Select(p => new FrpStatusInfo(p)).ToList();
         }
 
         private FrpAvaloniaSourceGenerationContext JContext => FrpAvaloniaSourceGenerationContext.Get();
 
         public Task<List<LogEntity>> GetLogsAsync(DateTime timeAfter)
         {
-            return GetObjectAsync(LogsEndpoint, JContext.ListLogEntity, ("timeAfter", timeAfter.ToString("yyyy-MM-ddTHH:mm:ss.fffffff")));
+            return GetObjectAsync(LogsEndpoint, JContext.ListLogEntity,
+                [("timeAfter", timeAfter.ToString("yyyy-MM-ddTHH:mm:ss.fffffff"))]);
         }
 
         public Task<List<ProcessInfo>> GetSystemProcesses()
@@ -114,7 +164,9 @@ namespace FrpGUI.Avalonia.DataProviders
 
         public Task SetTokenAsync(string oldToken, string newToken)
         {
-            return PostAsync($"{TokenEndpoint}?oldToken={WebUtility.UrlEncode(oldToken ?? "")}&newToken={WebUtility.UrlEncode(newToken)}", JContext.TokenVerification);
+            return PostAsync(
+                $"{TokenEndpoint}?oldToken={WebUtility.UrlEncode(oldToken ?? "")}&newToken={WebUtility.UrlEncode(newToken)}",
+                JContext.TokenVerification);
         }
 
         public Task StartFrpAsync(string id)

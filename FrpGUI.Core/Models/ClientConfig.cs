@@ -44,10 +44,14 @@ namespace FrpGUI.Models
             str.Append("serverPort = ").Append(ServerPort).AppendLine();
             str.Append("loginFailExit = ").Append(LoginFailExit.ToString().ToLower()).AppendLine();
 
-            str.Append("webServer.addr = ").Append('"').Append(DashBoardAddress).Append('"').AppendLine();
-            str.Append("webServer.port = ").Append(DashBoardPort).AppendLine();
-            str.Append("webServer.user = ").Append('"').Append(DashBoardUsername).Append('"').AppendLine();
-            str.Append("webServer.password  = ").Append('"').Append(DashBoardPassword).Append('"').AppendLine();
+            if (EnableDashBoard)
+            {
+                str.Append("webServer.addr = ").Append('"').Append(DashBoardAddress).Append('"').AppendLine();
+                str.Append("webServer.port = ").Append(DashBoardPort).AppendLine();
+                str.Append("webServer.user = ").Append('"').Append(DashBoardUsername).Append('"').AppendLine();
+                str.Append("webServer.password  = ").Append('"').Append(DashBoardPassword).Append('"').AppendLine();
+            }
+
             if (!string.IsNullOrWhiteSpace(Token))
             {
                 str.Append("auth.token = ").Append('"').Append(Token).Append('"').AppendLine();

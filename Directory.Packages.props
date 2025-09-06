@@ -5,7 +5,6 @@
   <ItemGroup>
     <PackageVersion Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageVersion Include="Avalonia.Themes.Fluent" Version="$(AvaloniaVersion)" />
-    <PackageVersion Include="Avalonia.Xaml.Behaviors" Version="11.2.0.14" />
     <PackageVersion Include="Avalonia.Xaml.Interactivity" Version="11.1.0.4" />
     <PackageVersion Include="BinToss.GroupBox.Avalonia" Version="1.0.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
@@ -38,5 +37,9 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Sqlite" Version="8.0.1" />
     <PackageVersion Include="WebView.Avalonia" Version="11.0.0.1" />
     <PackageVersion Include="WebView.Avalonia.Desktop" Version="11.0.0.1" />
+    <PackageVersion Include="Xaml.Behaviors.Avalonia" Version="11.3.2" />
+    <PackageVersion Include="Xaml.Behaviors.Interactivity" Version="11.3.2" />
+    <PackageVersion Include="HotAvalonia" Version="3.0.0" PrivateAssets="All" Publish="True" />
+    <PackageVersion Include="System.Reactive" Version="6.0.1" />
   </ItemGroup>
 </Project>

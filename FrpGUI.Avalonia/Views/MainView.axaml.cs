@@ -3,11 +3,9 @@ using Avalonia.Controls;
 using Avalonia.Interactivity;
 using CommunityToolkit.Mvvm.Messaging;
 using FrpGUI.Avalonia.ViewModels;
-
 using FrpGUI.Models;
 using FzLib.Avalonia.Controls;
 using FzLib.Avalonia.Dialogs;
-using FzLib.Avalonia.Messages;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -17,41 +15,15 @@ public partial class MainView : UserControl
 {
     public MainView()
     {
-        DataContext = App.Services.GetRequiredService<MainViewModel>();
         InitializeComponent();
-        RegisterMessages();
+        App.Services.GetRequiredService<IProgressOverlayService>().Register(ring);
     }
 
     protected override void OnLoaded(RoutedEventArgs e)
     {
         base.OnLoaded(e);
-        if (TopLevel.GetTopLevel(this) is Window)
-        {
-            //new WindowDragHelper(controlBar).EnableDrag();
-            new WindowDragHelper(tbkLogo).EnableDrag();
-        }
-    }
-
-    private void RegisterDialogHostMessage()
-    {
-        WeakReferenceMessenger.Default.Register(this, async delegate (object _, DialogHostMessage m)
-        {
-            try
-            {
-                m.SetResult(await m.Dialog.ShowDialog<object>(DialogContainerType.WindowPreferred, TopLevel.GetTopLevel(this)));
-            }
-            catch (Exception exception)
-            {
-                m.SetException(exception);
-            }
-        });
-    }
-    private void RegisterMessages()
-    {
-        this.RegisterCommonDialogMessage();
-        RegisterDialogHostMessage();
-        this.RegisterGetClipboardMessage();
-        this.RegisterGetStorageProviderMessage();
-        this.RegisterInputDialogMessage();
+        //不知道为什么，Linux无法找到TopLevel，因此强制指定
+        App.Services.GetRequiredService<IDialogService>().DefaultOwner =
+            TopLevel.GetTopLevel(this) ?? throw new InvalidOperationException("找不到当前的顶层");
     }
 }

@@ -3,6 +3,7 @@ using FrpGUI.WebAPI.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Reflection;
+using FzLib.Net;
 
 namespace FrpGUI.WebAPI;
 
@@ -35,7 +36,7 @@ public class FrpGUIActionFilter(AppConfig config) : IActionFilter
     {
         if (context.Exception != null)
         {
-            if (context.Exception is StatusBasedException sbe)
+            if (context.Exception is HttpStatusCodeException sbe)
             {
                 if (string.IsNullOrEmpty(sbe.Message))
                 {

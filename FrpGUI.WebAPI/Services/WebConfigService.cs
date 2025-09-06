@@ -1,4 +1,6 @@
-﻿namespace FrpGUI.WebAPI.Services
+﻿using FzLib.Net;
+
+namespace FrpGUI.WebAPI.Services
 {
     public class WebConfigService(IConfiguration config)
     {
@@ -11,7 +13,7 @@
         {
             if (ServerOnly())
             {
-                throw new StatusBasedException("当前配置不允许使用frp客户端", System.Net.HttpStatusCode.Forbidden);
+                throw new HttpStatusCodeException("当前配置不允许使用frp客户端", System.Net.HttpStatusCode.Forbidden);
             }
         }
     }

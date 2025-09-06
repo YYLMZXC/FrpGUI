@@ -2,19 +2,27 @@
     x:Class="FrpGUI.Avalonia.Views.ClientPanel"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:avalonia="clr-namespace:FrpGUI.Avalonia"
+    xmlns:cfg="using:FrpGUI.Models"
     xmlns:ctrl="using:FzLib.Avalonia.Controls"
+    xmlns:cvt="clr-namespace:FzLib.Avalonia.Converters;assembly=FzLib.Avalonia"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:v="clr-namespace:FrpGUI.Avalonia.Views"
     xmlns:vm="using:FrpGUI.Avalonia.ViewModels"
-    xmlns:cfg="using:FrpGUI.Models"
     x:Name="root"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:FrpConfigViewModel"
     SizeChanged="PanelBase_SizeChanged"
     mc:Ignorable="d">
+    <v:ConfigPanelBase.Styles>
+        <Style Selector="ctrl|FormItem">
+            <Setter Property="Width" Value="200" />
+            <Setter Property="Height" Value="64" />
+        </Style>
+    </v:ConfigPanelBase.Styles>
     <v:ConfigPanelBase.Resources>
         <system:Double x:Key="RuleWidth">200</system:Double>
         <PathGeometry x:Key="IconMore">
@@ -22,62 +30,108 @@
             M266.666667 522.666667m-53.333334 0a53.333333 53.333333 0 1 0 106.666667 0 53.333333 53.333333 0 1 0-106.666667 0Z
             M778.666667 522.666667m-53.333334 0a53.333333 53.333333 0 1 0 106.666667 0 53.333333 53.333333 0 1 0-106.666667 0Z
         </PathGeometry>
+        <StreamGeometry x:Key="IconAdd">M512 832a32 32 0 0 0 32-32v-256h256a32 32 0 0 0 0-64h-256V224a32 32 0 0 0-64 0v256H224a32 32 0 0 0 0 64h256v256a32 32 0 0 0 32 32</StreamGeometry>
+
     </v:ConfigPanelBase.Resources>
     <Grid RowDefinitions="*,Auto,*">
         <ScrollViewer
             HorizontalScrollBarVisibility="Disabled"
             VerticalScrollBarVisibility="Auto">
-            <ctrl:StackFormItemGroup Margin="8">
-                <ctrl:FormItem Label="名称">
-                    <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).Name}" />
-                </ctrl:FormItem>
-                <ctrl:FormItem Label="选项">
+            <StackPanel Spacing="8">
+
+                <HeaderedContentControl
+                    Classes="GroupBox"
+                    Header="基本配置">
                     <ctrl:WrapFormItemGroup>
-                        <CheckBox
-                            Content="自动启动"
-                            IsChecked="{Binding Frp.((cfg:ClientConfig)Config).AutoStart}" />
-                        <CheckBox
-                            Content="异常自动停止"
-                            IsChecked="{Binding Frp.((cfg:ClientConfig)Config).LoginFailExit}" />
-                        <CheckBox
-                            Content="启用TLS传输层安全性协议"
-                            IsChecked="{Binding Frp.((cfg:ClientConfig)Config).EnableTls}" />
+                        <ctrl:FormItem Header="名称">
+                            <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).Name}" />
+                        </ctrl:FormItem>
+                        <ctrl:FormItem Header=" ">
+                            <CheckBox
+                                Content="自动启动"
+                                IsChecked="{Binding Frp.((cfg:ClientConfig)Config).AutoStart}" />
+                        </ctrl:FormItem>
+                        <ctrl:FormItem Header=" ">
+                            <CheckBox
+                                Content="异常自动停止"
+                                IsChecked="{Binding Frp.((cfg:ClientConfig)Config).LoginFailExit}" />
+                        </ctrl:FormItem>
                     </ctrl:WrapFormItemGroup>
-                </ctrl:FormItem>
+                </HeaderedContentControl>
 
+                <HeaderedContentControl
+                    Classes="GroupBox"
+                    Header="连接配置">
+                    <ctrl:WrapFormItemGroup>
+                        <ctrl:FormItem Header="服务器地址">
+                            <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).ServerAddress}" />
+                        </ctrl:FormItem>
+                        <ctrl:FormItem Header="端口号">
+                            <NumericUpDown
+                                Classes="PortInput"
+                                Value="{Binding Frp.((cfg:ClientConfig)Config).ServerPort}" />
+                        </ctrl:FormItem>
+                        <ctrl:FormItem Header="连接密钥">
+                            <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).Token}" />
+                        </ctrl:FormItem>
+                        <ctrl:FormItem Header="预连接数量">
+                            <NumericUpDown
+                                Classes="PortInput"
+                                Value="{Binding Frp.((cfg:ClientConfig)Config).PoolCount}" />
+                        </ctrl:FormItem>
+                        <ctrl:FormItem Header=" ">
+                            <CheckBox
+                                Content="启用TLS传输层安全性协议"
+                                IsChecked="{Binding Frp.((cfg:ClientConfig)Config).EnableTls}" />
+                        </ctrl:FormItem>
+                    </ctrl:WrapFormItemGroup>
+                </HeaderedContentControl>
 
-                <ctrl:FormItem Label="服务器地址">
-                    <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).ServerAddress}" />
-                </ctrl:FormItem>
-                <ctrl:FormItem Label="端口号">
-                  <NumericUpDown
-                      Classes="PortInput"
-                      Value="{Binding Frp.((cfg:ClientConfig)Config).ServerPort}" />
-                </ctrl:FormItem>
-                <ctrl:FormItem Label="连接密钥">
-                    <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).Token}" />
-                </ctrl:FormItem>
-                <ctrl:FormItem Label="预连接数量">
-                  <NumericUpDown
-                      Classes="PortInput"
-                      Value="{Binding Frp.((cfg:ClientConfig)Config).PoolCount}" />
-                </ctrl:FormItem>
-
-                <ctrl:FormItem Label="管理面板地址">
-                    <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardAddress}" />
-                </ctrl:FormItem>
-                <ctrl:FormItem Label="管理面板端口">
-                  <NumericUpDown
-                      Classes="PortInput"
-                      Value="{Binding Frp.((cfg:ClientConfig)Config).DashBoardPort}" />
-                </ctrl:FormItem>
-                <ctrl:FormItem Label="管理面板用户名">
-                    <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardUsername}" />
-                </ctrl:FormItem>
-                <ctrl:FormItem Label="管理面板密码">
-                    <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardPassword}" />
-                </ctrl:FormItem>
-            </ctrl:StackFormItemGroup>
+                <HeaderedContentControl
+                    Classes="GroupBox"
+                    Header="{Binding .}">
+                    <HeaderedContentControl.HeaderTemplate>
+                        <DataTemplate x:DataType="vm:FrpConfigViewModel">
+                            <StackPanel
+                                Orientation="Horizontal"
+                                Spacing="8">
+                                <TextBlock
+                                    VerticalAlignment="Center"
+                                    Text="控制台配置" />
+                                <ToggleSwitch
+                                    VerticalAlignment="Center"
+                                    IsChecked="{Binding Frp.((cfg:ClientConfig)Config).EnableDashBoard}"
+                                    OffContent="禁用"
+                                    OnContent="启用" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </HeaderedContentControl.HeaderTemplate>
+                    <ctrl:WrapFormItemGroup>
+                        <ctrl:FormItem
+                            Header="监听地址"
+                            IsVisible="{Binding Frp.((cfg:ClientConfig)Config).EnableDashBoard}">
+                            <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardAddress}" />
+                        </ctrl:FormItem>
+                        <ctrl:FormItem
+                            Header="监听端口"
+                            IsVisible="{Binding Frp.((cfg:ClientConfig)Config).EnableDashBoard}">
+                            <NumericUpDown
+                                Classes="PortInput"
+                                Value="{Binding Frp.((cfg:ClientConfig)Config).DashBoardPort}" />
+                        </ctrl:FormItem>
+                        <ctrl:FormItem
+                            Header="访问用户名"
+                            IsVisible="{Binding Frp.((cfg:ClientConfig)Config).EnableDashBoard}">
+                            <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardUsername}" />
+                        </ctrl:FormItem>
+                        <ctrl:FormItem
+                            Header="访问密码"
+                            IsVisible="{Binding Frp.((cfg:ClientConfig)Config).EnableDashBoard}">
+                            <TextBox Text="{Binding Frp.((cfg:ClientConfig)Config).DashBoardPassword}" />
+                        </ctrl:FormItem>
+                    </ctrl:WrapFormItemGroup>
+                </HeaderedContentControl>
+            </StackPanel>
         </ScrollViewer>
         <GridSplitter
             Grid.Row="1"
@@ -97,6 +151,7 @@
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel
+                            ItemHeight="68"
                             ItemWidth="{DynamicResource RuleWidth}"
                             Orientation="Horizontal" />
                     </ItemsPanelTemplate>
@@ -105,7 +160,6 @@
                     <DataTemplate>
                         <Border
                             Margin="2,8,24,8"
-                            Padding="8"
                             Background="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"
                             CornerRadius="4">
                             <Border.Styles>
@@ -113,94 +167,127 @@
                                     <Setter Property="VerticalAlignment" Value="Center" />
                                 </Style>
                             </Border.Styles>
-                            <Grid
-                                ColumnDefinitions="Auto,8,84,16,*,16,Auto"
-                                RowDefinitions="18,0,18">
-                                <Border
-                                    Grid.RowSpan="99"
-                                    Width="8"
-                                    Height="8"
-                                    CornerRadius="4"
-                                    IsEnabled="{Binding Enable}">
-                                    <Border.Styles>
-                                        <Style Selector="Border">
-                                            <Setter Property="Background" Value="Green" />
-                                        </Style>
-                                        <Style Selector="Border:disabled">
-                                            <Setter Property="Background" Value="Red" />
-                                        </Style>
-                                    </Border.Styles>
+                            <ContentControl x:Name="c">
+                                <Border Padding="8">
+                                    <Grid
+                                        ColumnDefinitions="Auto,8,84,16,*,16,Auto"
+                                        RowDefinitions="18,0,18">
+                                        <Border
+                                            Grid.RowSpan="99"
+                                            Width="8"
+                                            Height="8"
+                                            CornerRadius="4"
+                                            IsEnabled="{Binding Enable}">
+                                            <Border.Styles>
+                                                <Style Selector="Border">
+                                                    <Setter Property="Background" Value="Green" />
+                                                </Style>
+                                                <Style Selector="Border:disabled">
+                                                    <Setter Property="Background" Value="Red" />
+                                                </Style>
+                                            </Border.Styles>
+                                        </Border>
+
+                                        <Button
+                                            Grid.RowSpan="99"
+                                            Grid.Column="99"
+                                            Background="Transparent">
+                                            <Button.Flyout>
+                                                <MenuFlyout>
+                                                    <MenuItem
+                                                        Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).EnableRuleCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        Header="启用"
+                                                        IsVisible="{Binding Enable, Converter={x:Static cvt:Converters.InverseBool}}" />
+                                                    <MenuItem
+                                                        Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).DisableRuleCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        Header="禁用"
+                                                        IsVisible="{Binding Enable}" />
+                                                    <MenuItem Header="-" />
+                                                    <MenuItem
+                                                        Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).ModifyRuleCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        Header="修改" />
+                                                    <MenuItem
+                                                        Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).RemoveRuleCommand}"
+                                                        CommandParameter="{Binding .}"
+                                                        Header="删除" />
+                                                </MenuFlyout>
+                                            </Button.Flyout>
+                                            <PathIcon Data="{StaticResource IconMore}" />
+                                        </Button>
+                                        <TextBlock
+                                            Grid.RowSpan="99"
+                                            Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            FontWeight="Bold"
+                                            Text="{Binding Name}"
+                                            TextTrimming="CharacterEllipsis" />
+
+
+                                        <TextBlock
+                                            Grid.Column="4"
+                                            TextTrimming="CharacterEllipsis">
+                                            <Run Text="{Binding LocalAddress}" />
+                                            <Run>:</Run>
+                                            <Run Text="{Binding LocalPort}" />
+                                            <Run Text="→" />
+                                            <Run Text="{Binding RemotePort}" />
+                                            <Run Text="{Binding StcpServerName}" />
+                                        </TextBlock>
+                                        <Grid
+                                            Grid.Row="2"
+                                            Grid.Column="4"
+                                            ClipToBounds="True"
+                                            ColumnDefinitions="Auto,8,Auto,8,Auto">
+                                            <TextBlock TextTrimming="CharacterEllipsis">
+                                                <Run FontWeight="Bold">类型：</Run>
+                                                <Run Text="{Binding Type}" />
+                                            </TextBlock>
+                                            <TextBlock
+                                                Grid.Column="2"
+                                                Foreground="Green"
+                                                IsVisible="{Binding Encryption}"
+                                                Text="加密" />
+                                            <TextBlock
+                                                Grid.Column="4"
+                                                Foreground="Orange"
+                                                IsVisible="{Binding Compression}"
+                                                Text="压缩" />
+                                        </Grid>
+                                    </Grid>
                                 </Border>
-
-                                <Button
-                                    Grid.RowSpan="99"
-                                    Grid.Column="99"
-                                    Background="Transparent">
-                                    <Button.Flyout>
-                                        <MenuFlyout>
-                                            <MenuItem
-                                                Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).EnableRuleCommand}"
-                                                CommandParameter="{Binding .}"
-                                                Header="启用"
-                                                IsVisible="{Binding Enable, Converter={StaticResource InverseBoolConverter}}" />
-                                            <MenuItem
-                                                Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).DisableRuleCommand}"
-                                                CommandParameter="{Binding .}"
-                                                Header="禁用"
-                                                IsVisible="{Binding Enable}" />
-                                            <MenuItem Header="-" />
-                                            <MenuItem
-                                                Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).ModifyRuleCommand}"
-                                                CommandParameter="{Binding .}"
-                                                Header="修改" />
-                                            <MenuItem
-                                                Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).RemoveRuleCommand}"
-                                                CommandParameter="{Binding .}"
-                                                Header="删除" />
-                                        </MenuFlyout>
-                                    </Button.Flyout>
-                                    <PathIcon Data="{StaticResource IconMore}" />
-                                </Button>
-                                <TextBlock
-                                    Grid.RowSpan="99"
-                                    Grid.Column="2"
-                                    VerticalAlignment="Center"
-                                    FontWeight="Bold"
-                                    Text="{Binding Name}"
-                                    TextTrimming="CharacterEllipsis" />
-
-
-                                <TextBlock
-                                    Grid.Column="4"
-                                    TextTrimming="CharacterEllipsis">
-                                    <Run Text="{Binding LocalAddress}" />
-                                    <Run>:</Run>
-                                    <Run Text="{Binding LocalPort}" />
-                                    <Run Text="→" />
-                                    <Run Text="{Binding RemotePort}" />
-                                    <Run Text="{Binding StcpServerName}" />
-                                </TextBlock>
-                                <Grid
-                                    Grid.Row="2"
-                                    Grid.Column="4"
-                                    ClipToBounds="True"
-                                    ColumnDefinitions="Auto,8,Auto,8,Auto">
-                                    <TextBlock TextTrimming="CharacterEllipsis">
-                                        <Run FontWeight="Bold">类型：</Run>
-                                        <Run Text="{Binding Type}" />
-                                    </TextBlock>
-                                    <TextBlock
-                                        Grid.Column="2"
-                                        Foreground="Green"
-                                        IsVisible="{Binding Encryption}"
-                                        Text="加密" />
-                                    <TextBlock
-                                        Grid.Column="4"
-                                        Foreground="Orange"
-                                        IsVisible="{Binding Compression}"
-                                        Text="压缩" />
-                                </Grid>
-                            </Grid>
+                                <Interaction.Behaviors>
+                                    <DataTriggerBehavior
+                                        Binding="{Binding Name}"
+                                        ComparisonCondition="Equal"
+                                        Value="{x:Static vm:FrpConfigViewModel.AddButtonDataName}">
+                                        <DataTriggerBehavior.Actions>
+                                            <ChangePropertyAction
+                                                PropertyName="Content"
+                                                TargetObject="c">
+                                                <ChangePropertyAction.Value>
+                                                    <Button
+                                                        HorizontalAlignment="Stretch"
+                                                        VerticalAlignment="Stretch"
+                                                        HorizontalContentAlignment="Center"
+                                                        VerticalContentAlignment="Center"
+                                                        Background="Transparent"
+                                                        Command="{Binding $parent[v:ConfigPanelBase].((vm:FrpConfigViewModel)DataContext).AddRuleCommand}">
+                                                        <StackPanel
+                                                            Orientation="Horizontal"
+                                                            Spacing="4">
+                                                            <PathIcon Data="{StaticResource IconAdd}" />
+                                                            <TextBlock VerticalAlignment="Center">新增规则</TextBlock>
+                                                        </StackPanel>
+                                                    </Button>
+                                                </ChangePropertyAction.Value>
+                                            </ChangePropertyAction>
+                                        </DataTriggerBehavior.Actions>
+                                    </DataTriggerBehavior>
+                                </Interaction.Behaviors>
+                            </ContentControl>
                         </Border>
                     </DataTemplate>
 

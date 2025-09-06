@@ -8,6 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "#", "#", "{38A08A1F-58A3-47
 		Directory.Build.props = Directory.Build.props
 		Directory.Packages.props = Directory.Packages.props
 		README.md = README.md
+		build.ps1 = build.ps1
+		clean.ps1 = clean.ps1
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FrpGUI.Service", "FrpGUI.Service\FrpGUI.Service.csproj", "{DD6722FB-FE07-44AD-92BD-60EC33553F02}"

@@ -2,6 +2,8 @@
     x:Class="FrpGUI.Avalonia.Views.ControlBar"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:b="clr-namespace:FzLib.Avalonia.Behaviors;assembly=FzLib.Avalonia"
+    xmlns:cvt="using:FzLib.Avalonia.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:e="using:FrpGUI.Enums"
     xmlns:f="clr-namespace:FrpGUI;assembly=FrpGUI.Core"
@@ -46,17 +48,20 @@
             </Style>
         </Grid.Styles>
         <Panel
-            x:Name="thumb"
             Grid.Column="1"
-            Background="Transparent" />
+            Background="Transparent">
+            <Interaction.Behaviors>
+                <b:WindowDragBehavior />
+            </Interaction.Behaviors>
+        </Panel>
         <StackPanel
-            IsVisible="{Binding CurrentFrpProcess, Converter={StaticResource NotNullConverter}}"
+            IsVisible="{Binding CurrentFrpProcess, Converter={x:Static cvt:Converters.IsNotNull}}"
             Orientation="Horizontal">
 
             <Button Command="{Binding StartCommand}">
                 <Button.IsEnabled>
                     <Binding
-                        Converter="{StaticResource EqualConverter}"
+                        Converter="{x:Static cvt:Converters.EqualWithParameter}"
                         Path="CurrentFrpProcess.ProcessStatus">
                         <Binding.ConverterParameter>
                             <e:ProcessStatus>Stopped</e:ProcessStatus>
@@ -74,7 +79,7 @@
             <Button Command="{Binding StopCommand}">
                 <Button.IsEnabled>
                     <Binding
-                        Converter="{StaticResource EqualConverter}"
+                        Converter="{x:Static cvt:Converters.EqualWithParameter}"
                         Path="CurrentFrpProcess.ProcessStatus">
                         <Binding.ConverterParameter>
                             <e:ProcessStatus>Running</e:ProcessStatus>
@@ -92,7 +97,7 @@
             <Button Command="{Binding RestartCommand}">
                 <Button.IsEnabled>
                     <Binding
-                        Converter="{StaticResource EqualConverter}"
+                        Converter="{x:Static cvt:Converters.EqualWithParameter}"
                         Path="CurrentFrpProcess.ProcessStatus">
                         <Binding.ConverterParameter>
                             <e:ProcessStatus>Running</e:ProcessStatus>
@@ -117,26 +122,29 @@
             </Button>
 
 
-            <Button
-                Command="{Binding AddRuleCommand}"
-                IsVisible="{Binding CurrentFrpProcess.Config, Converter={StaticResource EqualConverter}, ConverterParameter={x:Type m:ClientConfig}}">
-                <StackPanel
-                    Orientation="Horizontal"
-                    Spacing="4">
-                    <PathIcon Data="{StaticResource IconRestart}" />
-                    <TextBlock VerticalAlignment="Center">增加规则</TextBlock>
-                </StackPanel>
-            </Button>
+            <!--  <Button  -->
+            <!--  Command="{Binding AddRuleCommand}"  -->
+            <!--  IsVisible="{Binding CurrentFrpProcess.Config, Converter={x:Static cvt:Converters.EqualWithParameter}, ConverterParameter={x:Type m:ClientConfig}}">  -->
+            <!--  <StackPanel  -->
+            <!--  Orientation="Horizontal"  -->
+            <!--  Spacing="4">  -->
+            <!--         <PathIcon Data="{StaticResource IconAdd}" /> -->
+            <!--         <TextBlock VerticalAlignment="Center">增加规则</TextBlock> -->
+            <!--     </StackPanel> -->
+            <!-- </Button> -->
 
             <Button Command="{Binding BrowseAdminCommand}">
                 <Button.IsEnabled>
-                    <Binding
-                        Converter="{StaticResource EqualConverter}"
-                        Path="CurrentFrpProcess.ProcessStatus">
-                        <Binding.ConverterParameter>
-                            <e:ProcessStatus>Running</e:ProcessStatus>
-                        </Binding.ConverterParameter>
-                    </Binding>
+                    <MultiBinding Converter="{x:Static cvt:Converters.AndLogic}">
+                        <Binding
+                            Converter="{x:Static cvt:Converters.EqualWithParameter}"
+                            Path="CurrentFrpProcess.ProcessStatus">
+                            <Binding.ConverterParameter>
+                                <e:ProcessStatus>Running</e:ProcessStatus>
+                            </Binding.ConverterParameter>
+                        </Binding>
+                        <Binding Path="CurrentFrpProcess.Config.EnableDashBoard" />
+                    </MultiBinding>
                 </Button.IsEnabled>
                 <StackPanel
                     Orientation="Horizontal"

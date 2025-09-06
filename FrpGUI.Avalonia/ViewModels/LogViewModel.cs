@@ -3,22 +3,26 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using FrpGUI.Avalonia.DataProviders;
 using FrpGUI.Models;
-using FzLib.Avalonia.Messages;
 using System;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
+using FzLib.Avalonia.Services;
 
 namespace FrpGUI.Avalonia.ViewModels;
 
 public partial class LogViewModel : ViewModelBase
 {
+    private readonly IClipboardService clipboard;
     private readonly UIConfig config;
     private readonly LocalLogger logger;
 
     [ObservableProperty]
     private LogInfo selectedLog;
 
-    public LogViewModel(IDataProvider provider, UIConfig config, LocalLogger logger) : base(provider)
+    public LogViewModel(IDataProvider provider, IClipboardService clipboard, UIConfig config, LocalLogger logger) :
+        base(provider, null, null)
     {
+        this.clipboard = clipboard;
         this.config = config;
         this.logger = logger;
         StartTimer();
@@ -26,7 +30,7 @@ public partial class LogViewModel : ViewModelBase
 
     public ObservableCollection<LogInfo> Logs { get; } = new ObservableCollection<LogInfo>();
 
-    public void AddLog(LogEntity e)
+    public void AddLog(LogEntity e, bool select)
     {
         try
         {
@@ -36,6 +40,7 @@ public partial class LogViewModel : ViewModelBase
             {
                 Logs.RemoveAt(Logs.Count - 1);
             }
+
             IBrush brush = Brushes.Transparent;
             if (e.Type == 'W')
             {
@@ -57,24 +62,27 @@ public partial class LogViewModel : ViewModelBase
                     }
                 }
             }
+
             var log = new LogInfo(e)
             {
                 TypeBrush = brush,
             };
 
             Logs.Add(log);
-            SelectedLog = log;
+            if (select)
+            {
+                SelectedLog = log;
+            }
         }
         catch (Exception ex)
         {
-
         }
     }
 
     [RelayCommand]
-    private void CopyLog(LogInfo log)
+    private async Task CopyLogAsync(LogInfo log)
     {
-        SendMessage(new GetClipboardMessage()).Clipboard.SetTextAsync(log.Message);
+        await clipboard.SetTextAsync(log.Message);
     }
 
     private void StartTimer()
@@ -90,16 +98,22 @@ public partial class LogViewModel : ViewModelBase
                     lastRequestTime = logs[^1].Time;
                     foreach (var log in logs)
                     {
-                        AddLog(log);
+                        AddLog(log, false);
                     }
+                    SelectedLog = Logs[^1];
                 }
             });
         }
-        logger.NewLog += (s, e) => AddLog(e.Log);
+
+        logger.NewLog += (s, e) => AddLog(e.Log, true);
         logger.SaveLogs = false;
         foreach (var log in logger.GetSavedLogs())
         {
-            AddLog(log);
+            AddLog(log, false);
+        }
+        if (Logs.Count > 0)
+        {
+            SelectedLog = Logs[^1];
         }
     }
 }

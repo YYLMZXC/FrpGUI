@@ -8,13 +8,70 @@ using System.Linq;
 
 namespace FrpGUI.Avalonia.ViewModels;
 
-public partial class RuleViewModel(IDataProvider provider) : ViewModelBase(provider)
+public partial class RuleViewModel: ViewModelBase
 {
     [ObservableProperty]
-    public Rule rule = new Rule();
+    private string errorMessage;
 
     [ObservableProperty]
-    public string errorMessage;
+    private Rule rule = new Rule();
+    public bool Check()
+    {
+        try
+        {
+            if (Rule.Name.Length == 0) T("名称为空");
+            if (Rule.Name.Length > 10) T("名称长度不可超过10");
+            if (Rule.LocalPort.Length == 0) T("本地端口为空");
+            if (Rule.LocalAddress.Length == 0) T("本地地址为空");
+
+            ushort[] localPort = null;
+            ushort[] remotePort = null;
+            switch (Rule.Type)
+            {
+                case NetType.TCP:
+                case NetType.UDP:
+                    if (Rule.RemotePort.Length == 0) T("远程端口为空");
+                    try
+                    {
+                        localPort = GetPorts(Rule.LocalPort);
+                    }
+                    catch (FormatException ex)
+                    {
+                        T("本地端口" + ex.Message);
+                    }
+                    try
+                    {
+                        remotePort = GetPorts(Rule.RemotePort);
+                    }
+                    catch (FormatException ex)
+                    {
+                        T("远程端口" + ex.Message);
+                    }
+                    if (localPort.Length != remotePort.Length)
+                    {
+                        T("本地端口和远程端口数量不同");
+                    }
+                    break;
+
+                case NetType.HTTP:
+                case NetType.HTTPS:
+                case NetType.STCP:
+                case NetType.STCP_Visitor:
+                    break;
+            }
+            if (Rule.Type is NetType.STCP or NetType.STCP_Visitor && string.IsNullOrWhiteSpace(Rule.StcpKey)) T("STCP密钥为空");
+            if (Rule.Type is NetType.STCP_Visitor && string.IsNullOrWhiteSpace(Rule.StcpServerName)) T("STCP服务名为空");
+
+            //暂不考虑端口不对应
+
+            return true;
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+            return false;
+        }
+    }
 
     private ushort[] GetPorts(string port)
     {
@@ -73,63 +130,5 @@ public partial class RuleViewModel(IDataProvider provider) : ViewModelBase(provi
     private void T(string message)
     {
         throw new ArgumentException(message);
-    }
-
-    public bool Check()
-    {
-        try
-        {
-            if (Rule.Name.Length == 0) T("名称为空");
-            if (Rule.Name.Length > 10) T("名称长度不可超过10");
-            if (Rule.LocalPort.Length == 0) T("本地端口为空");
-            if (Rule.LocalAddress.Length == 0) T("本地地址为空");
-
-            ushort[] localPort = null;
-            ushort[] remotePort = null;
-            switch (Rule.Type)
-            {
-                case NetType.TCP:
-                case NetType.UDP:
-                    if (Rule.RemotePort.Length == 0) T("远程端口为空");
-                    try
-                    {
-                        localPort = GetPorts(Rule.LocalPort);
-                    }
-                    catch (FormatException ex)
-                    {
-                        T("本地端口" + ex.Message);
-                    }
-                    try
-                    {
-                        remotePort = GetPorts(Rule.RemotePort);
-                    }
-                    catch (FormatException ex)
-                    {
-                        T("远程端口" + ex.Message);
-                    }
-                    if (localPort.Length != remotePort.Length)
-                    {
-                        T("本地端口和远程端口数量不同");
-                    }
-                    break;
-
-                case NetType.HTTP:
-                case NetType.HTTPS:
-                case NetType.STCP:
-                case NetType.STCP_Visitor:
-                    break;
-            }
-            if (Rule.Type is NetType.STCP or NetType.STCP_Visitor && string.IsNullOrWhiteSpace(Rule.StcpKey)) T("STCP密钥为空");
-            if (Rule.Type is NetType.STCP_Visitor && string.IsNullOrWhiteSpace(Rule.StcpServerName)) T("STCP服务名为空");
-
-            //暂不考虑端口不对应
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            ErrorMessage = ex.Message;
-            return false;
-        }
     }
 }

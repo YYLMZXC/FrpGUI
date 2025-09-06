@@ -6,12 +6,15 @@
     <Nullable>disable</Nullable>
     <BaseOutputPath>../Generation/bin</BaseOutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <OutputPath>$(Temp)\$(SolutionName)\$(Configuration)\$(AssemblyName)</OutputPath>
-    <BaseIntermediateOutputPath>$(Temp)\$(SolutionName)\obj\$(Configuration)\$(AssemblyName)</BaseIntermediateOutputPath>
     <RootNamespace>FzLib</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
+  <PropertyGroup Condition="'$(OutputToTempDir)' == 'T'" >
+    <OutputPath>$(Temp)\$(SolutionName)\$(Configuration)\$(AssemblyName)</OutputPath>
+    <BaseIntermediateOutputPath>$(Temp)\$(SolutionName)\obj\$(Configuration)\$(AssemblyName)</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <ItemGroup Condition="'$(OutputToTempDir)' == 'T'" >
     <AvaloniaXaml Remove="obj\**" />
     <Compile Remove="obj\**" />
     <EmbeddedResource Remove="obj\**" />
@@ -30,7 +33,7 @@
   
   <ItemGroup Condition="'$(Configuration)' == 'Debug'  and '$(FzLocal)' == 'T'">
     <Reference Include="FzLib">
-      <HintPath>..\..\FzLib\Publish\Release\net8.0\FzLib.dll</HintPath>
+      <HintPath>..\..\FzLib\Publish\libs\FzLib.dll</HintPath>
     </Reference>
   </ItemGroup>
 

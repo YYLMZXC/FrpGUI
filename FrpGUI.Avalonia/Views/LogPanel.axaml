@@ -2,14 +2,25 @@
     x:Class="FrpGUI.Avalonia.Views.LogPanel"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cvt="using:FzLib.Avalonia.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:v="clr-namespace:FrpGUI.Avalonia.Views"
     xmlns:vm="using:FrpGUI.Avalonia.ViewModels"
+    Margin="{OnPlatform {StaticResource ZeroThickness},
+                        Windows={StaticResource WindowsMargin}}"
+    Padding="{OnPlatform {StaticResource ZeroThickness},
+                         Windows={StaticResource WindowsPadding}}"
     d:DesignHeight="450"
     d:DesignWidth="800"
     x:DataType="vm:LogViewModel"
+    Background="{DynamicResource Background1}"
     mc:Ignorable="d">
+    <UserControl.Resources>
+        <Thickness x:Key="ZeroThickness">0,0,0,0</Thickness>
+        <Thickness x:Key="WindowsMargin">0,-40,0,0</Thickness>
+        <Thickness x:Key="WindowsPadding">0,40,0,0</Thickness>
+    </UserControl.Resources>
     <ListBox
         x:Name="lbx"
         AutoScrollToSelectedItem="True"
@@ -36,6 +47,8 @@
             <DataTemplate>
                 <Grid Width="220">
                     <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="8" />
                         <ColumnDefinition Width="*" />
                         <ColumnDefinition Width="8" />
                         <ColumnDefinition Width="Auto" />
@@ -46,6 +59,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
                     <StackPanel
+                        Grid.Column="2"
                         VerticalAlignment="Center"
                         Opacity="0.75"
                         Orientation="Horizontal"
@@ -60,23 +74,23 @@
                     </StackPanel>
                     <TextBlock
                         Grid.Row="1"
+                        Grid.Column="2"
                         Margin="0,0,4,0"
                         VerticalAlignment="Center"
-                        IsVisible="{Binding InstanceName, Converter={StaticResource NotNullConverter}}"
+                        IsVisible="{Binding InstanceName, Converter={x:Static cvt:Converters.IsNotNull}}"
                         Opacity="0.75"
                         Text="{Binding InstanceName}"
                         TextWrapping="NoWrap" />
                     <Ellipse
-                        Grid.Row="2"
+                        Grid.RowSpan="3"
                         Width="6"
                         Height="6"
-                        Margin="-12,8,0,0"
                         HorizontalAlignment="Left"
-                        VerticalAlignment="Top"
+                        VerticalAlignment="Center"
                         Fill="{Binding TypeBrush}" />
                     <Border
                         Grid.RowSpan="2"
-                        Grid.Column="2"
+                        Grid.Column="4"
                         Padding="4"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
@@ -88,7 +102,8 @@
                     </Border>
                     <TextBlock
                         Grid.Row="2"
-                        Grid.ColumnSpan="9"
+                        Grid.Column="2"
+                        Grid.ColumnSpan="3"
                         Margin="0,0,4,0"
                         Text="{Binding Message}"
                         TextWrapping="Wrap" />

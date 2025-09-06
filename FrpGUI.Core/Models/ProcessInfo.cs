@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using FzLib.Net;
+using System.Diagnostics;
 
 namespace FrpGUI.Models
 {
@@ -32,11 +33,11 @@ namespace FrpGUI.Models
             }
             catch (ArgumentException)
             {
-                throw new StatusBasedException($"不存在ID为{id}的进程",System.Net.HttpStatusCode.NotFound);
+                throw new HttpStatusCodeException($"不存在ID为{id}的进程",System.Net.HttpStatusCode.NotFound);
             }
             if (process.ProcessName is not ("frps" or "frpc"))
             {
-                throw new StatusBasedException("指定的进程不是Frp进程", System.Net.HttpStatusCode.Forbidden);
+                throw new HttpStatusCodeException("指定的进程不是Frp进程", System.Net.HttpStatusCode.Forbidden);
             }
 
             process.Kill();

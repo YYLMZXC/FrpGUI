@@ -5,9 +5,9 @@
     xmlns:c="clr-namespace:FrpGUI.Avalonia.Converters"
     xmlns:cf="clr-namespace:FrpGUI.Configs;assembly=FrpGUI.Core"
     xmlns:ctrl="using:FzLib.Avalonia.Controls"
+    xmlns:cvt="using:FzLib.Avalonia.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:dialog="using:FzLib.Avalonia.Dialogs"
-    xmlns:gb="using:GroupBox.Avalonia.Controls"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:me="using:FzLib.Avalonia.MarkupExtensions"
     xmlns:r="using:FrpGUI.Avalonia"
@@ -19,42 +19,68 @@
     Height="540"
     Padding="4"
     x:DataType="vm:SettingViewModel"
-    CloseButtonContent="关闭"
+    CloseButtonContent="完成"
     mc:Ignorable="d">
 
     <ScrollViewer
         HorizontalScrollBarVisibility="Disabled"
+        IsEnabled="{Binding $parent[dialog:DialogHost].CloseButtonEnable}"
         VerticalScrollBarVisibility="Auto">
 
         <StackPanel
             Orientation="Vertical"
             Spacing="8">
-            <gb:GroupBox Header="运行模式">
+            <HeaderedContentControl
+                Classes="GroupBox"
+                Header="运行模式">
                 <StackPanel
                     Orientation="Vertical"
                     Spacing="8">
                     <TextBlock>
                         <Run FontWeight="Bold">单机模式：</Run>
-                        <Run>客户端直接调用服务，适用于本机临时使用，支持后台运行，但不支持开机自启</Run>
+                        <Run>客户端直接调用frp，适用于本机使用，支持后台运行和开机自启</Run>
                         <LineBreak />
                         <Run FontWeight="Bold">服务模式：</Run>
                         <Run>需要单独的后台服务，适用于有远程调用的需求以及长期使用</Run>
                     </TextBlock>
-                    <ComboBox
-                        Width="180"
-                        IsEnabled="{OnPlatform Default=True,
-                                               Browser=False}"
-                        ItemsSource="{me:EnumValues r:RunningMode}"
-                        SelectedItem="{Binding Config.RunningMode}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding ., Converter={StaticResource DescriptionConverter}}" />
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
+                    <!--  <ComboBox  -->
+                    <!--  Width="180"  -->
+                    <!--  IsEnabled="{OnPlatform Default=True,  -->
+                    <!--  Browser=False}"  -->
+                    <!--  ItemsSource="{me:EnumValues r:RunningMode}"  -->
+                    <!--  SelectedItem="{Binding Config.RunningMode}">  -->
+                    <!--     <ComboBox.ItemTemplate> -->
+                    <!--         <DataTemplate> -->
+                    <!--             <TextBlock Text="{Binding ., Converter={x:Static cvt:Converters.Description}}" /> -->
+                    <!--         </DataTemplate> -->
+                    <!--     </ComboBox.ItemTemplate> -->
+                    <!-- </ComboBox> -->
 
+                    <StackPanel
+                        Orientation="Horizontal"
+                        Spacing="8">
+                        <StackPanel.Resources>
+                            <cvt:ValueMappingConverter
+                                x:Key="InverseRunningModeValueMappingConverter"
+                                Map="{me:StringToDictionary Service:单机模式;Singleton:服务模式}" />
+
+                        </StackPanel.Resources>
+                        <TextBlock VerticalAlignment="Center">
+                            <Run FontWeight="Bold">当前运行模式：</Run>
+                            <Run Text="{Binding Config.RunningMode, Converter={x:Static cvt:Converters.Description}}" />
+                        </TextBlock>
+                        <Button
+                            Classes="Link"
+                            Command="{Binding SwitchRunningModeCommand}">
+                            <TextBlock>
+                                <Run Text="切换到" />
+                                <Run Text="{Binding Config.RunningMode, Converter={StaticResource InverseRunningModeValueMappingConverter}}" />
+                                <Run Text="（需重启应用）" />
+                            </TextBlock>
+                        </Button>
+                    </StackPanel>
                     <ctrl:StackFormItemGroup
-                        IsVisible="{Binding Config.RunningMode, Converter={StaticResource EqualConverter}, ConverterParameter=Service}"
+                        IsVisible="{Binding Config.RunningMode, Converter={x:Static cvt:Converters.EqualWithParameter}, ConverterParameter=Service}"
                         LabelWidth="128">
 
                         <ctrl:FormItem Label="服务器地址：">
@@ -68,7 +94,7 @@
                                     Text="{Binding Token}"
                                     Watermark="服务端的连接密码" />
                                 <Button
-                                    Grid.Column="4"
+                                    Grid.Column="2"
                                     Content="修改密码">
                                     <Button.Flyout>
                                         <Flyout>
@@ -95,7 +121,7 @@
                     </ctrl:StackFormItemGroup>
 
                     <ctrl:StackFormItemGroup
-                        IsVisible="{Binding Config.RunningMode, Converter={StaticResource EqualConverter}, ConverterParameter=Singleton}"
+                        IsVisible="{Binding Config.RunningMode, Converter={x:Static cvt:Converters.EqualWithParameter}, ConverterParameter=Singleton}"
                         LabelWidth="128">
 
                         <ToggleSwitch
@@ -104,12 +130,11 @@
                             OnContent="开机自启" />
 
                     </ctrl:StackFormItemGroup>
-                    <Button
-                        Command="{Binding RestartCommand}"
-                        Content="应用（需重启程序）" />
                 </StackPanel>
-            </gb:GroupBox>
-            <gb:GroupBox Header="托盘图标">
+            </HeaderedContentControl>
+            <HeaderedContentControl
+                Classes="GroupBox"
+                Header="托盘图标">
                 <StackPanel
                     Orientation="Vertical"
                     Spacing="8">
@@ -118,45 +143,64 @@
                         IsEnabled="{Binding !Startup}"
                         OffContent="不显示托盘图标"
                         OnContent="显示托盘图标" />
-                    <TextBlock>单机模式下，显示托盘图标后支持后台运行frp，退出程序将结束所有的frp进程；</TextBlock>
-                    <TextBlock>服务模式下，退出程序对服务端运行的frp没有影响。</TextBlock>
+                    <TextBlock>
+                        <Run FontWeight="Bold">单机模式下，</Run>
+                        <Run>显示托盘图标后支持后台运行frp，退出程序将结束所有的frp进程</Run>
+                        <LineBreak />
+                        <Run FontWeight="Bold">服务模式下：</Run>
+                        <Run>退出程序对服务端运行的frp没有影响</Run>
+                    </TextBlock>
                 </StackPanel>
-            </gb:GroupBox>
-            <gb:GroupBox Header="正在运行的进程">
-                <ItemsControl
-                    BorderBrush="Gray"
-                    BorderThickness="0,0.5,0,0.5"
-                    ItemsSource="{Binding Processes}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border
-                                BorderBrush="Gray"
-                                BorderThickness="0,0.5,0,0.5">
-                                <Grid
-                                    Margin="4"
-                                    ColumnDefinitions="*,8,Auto"
-                                    RowDefinitions="*,4,*">
-                                    <TextBlock Text="{Binding ProcessName}" />
-                                    <TextBlock
-                                        HorizontalAlignment="Right"
-                                        Text="{Binding StartTime}" />
-                                    <TextBlock
-                                        Grid.Row="2"
-                                        Text="{Binding FileName}"
-                                        TextTrimming="PrefixCharacterEllipsis" />
-                                    <Button
-                                        Grid.RowSpan="99"
-                                        Grid.Column="2"
-                                        VerticalAlignment="Center"
-                                        Command="{Binding $parent[ItemsControl].((vm:SettingViewModel)DataContext).KillProcessCommand}"
-                                        CommandParameter="{Binding .}"
-                                        Content="结束" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
-            </gb:GroupBox>
+            </HeaderedContentControl>
+            <HeaderedContentControl
+                Classes="GroupBox"
+                Header="正在运行的进程">
+                <StackPanel Spacing="8">
+                    <ItemsControl
+                        BorderBrush="Gray"
+                        BorderThickness="0,0.5,0,0.5"
+                        ItemsSource="{Binding Processes}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    BorderBrush="Gray"
+                                    BorderThickness="0,0.5,0,0.5">
+                                    <Grid
+                                        Margin="4"
+                                        ColumnDefinitions="*,8,Auto"
+                                        RowDefinitions="*,4,*">
+                                        <TextBlock
+                                            VerticalAlignment="Bottom"
+                                            Text="{Binding ProcessName}" />
+                                        <TextBlock
+                                            HorizontalAlignment="Right"
+                                            VerticalAlignment="Bottom"
+                                            Text="{Binding StartTime}" />
+                                        <TextBlock
+                                            Grid.Row="2"
+                                            VerticalAlignment="Top"
+                                            Text="{Binding FileName}"
+                                            TextTrimming="PrefixCharacterEllipsis" />
+                                        <Button
+                                            Grid.RowSpan="99"
+                                            Grid.Column="2"
+                                            VerticalAlignment="Center"
+                                            Command="{Binding $parent[ItemsControl].((vm:SettingViewModel)DataContext).KillProcessCommand}"
+                                            CommandParameter="{Binding .}"
+                                            Content="结束" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock
+                        HorizontalAlignment="Center"
+                        IsVisible="{Binding Processes.Count, Converter={x:Static cvt:Converters.EqualWithParameter}, ConverterParameter=0}"
+                        Opacity="0.5"
+                        Text="没有正在运行的进程" />
+                </StackPanel>
+            </HeaderedContentControl>
 
         </StackPanel>
     </ScrollViewer>

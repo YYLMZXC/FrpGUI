@@ -1,18 +1,18 @@
 <Project>
   <PropertyGroup>
     <!--App版本-->
-    <AppVersion>3.0.0</AppVersion>
+    <AppVersion>3.1.1</AppVersion>
 
     <!--Avalonia库版本-->
-    <AvaloniaVersion>11.2.6</AvaloniaVersion>
+    <AvaloniaVersion>11.3.5</AvaloniaVersion>
     <!--FzLib库版本-->
-    <FzLibVersion>2.3.0</FzLibVersion>
+    <FzLibVersion>3.0.11</FzLibVersion>
 
     <!--使用本地FzLib库。非作者使用时，应改为F-->
     <FzLocal>T</FzLocal>
 
-    <!--在非Windows上开发，设置临时文件夹目录-->
-    <!--<Temp>/home/username/temp</Temp>-->
+    <!--在Windows上开发，可以设置输出到临时文件夹-->
+    <OutputToTempDir>T</OutputToTempDir>
   </PropertyGroup>
 
   <PropertyGroup>

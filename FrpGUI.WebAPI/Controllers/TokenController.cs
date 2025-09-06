@@ -1,6 +1,7 @@
 ﻿using FrpGUI.Configs;
 using FrpGUI.Enums;
 using FrpGUI.Services;
+using FzLib.Net;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FrpGUI.WebAPI.Controllers;
@@ -35,7 +36,7 @@ public class TokenController : FrpControllerBase
         {
             if (!string.IsNullOrWhiteSpace(configs.Token) || !string.IsNullOrWhiteSpace(oldToken))
             {
-                throw new StatusBasedException("旧密码错误", System.Net.HttpStatusCode.Unauthorized);
+                throw new HttpStatusCodeException("旧密码错误", System.Net.HttpStatusCode.Unauthorized);
             }
         }
         ArgumentException.ThrowIfNullOrWhiteSpace(newToken, nameof(newToken));

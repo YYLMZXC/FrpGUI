@@ -13,60 +13,106 @@
     d:DesignWidth="800"
     x:DataType="vm:FrpConfigViewModel"
     mc:Ignorable="d">
+    <v:ConfigPanelBase.Styles>
+        <Style Selector="ctrl|FormItem">
+            <Setter Property="Width" Value="200" />
+            <Setter Property="Height" Value="64" />
+        </Style>
+    </v:ConfigPanelBase.Styles>
     <ScrollViewer
         HorizontalScrollBarVisibility="Disabled"
         VerticalScrollBarVisibility="Auto">
-        <ctrl:StackFormItemGroup Margin="8">
-            <ctrl:FormItem Label="名称">
-                <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).Name}" />
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="选项">
+        <StackPanel Spacing="8">
+            <HeaderedContentControl
+                Classes="GroupBox"
+                Header="基本配置">
                 <ctrl:WrapFormItemGroup>
-                    <CheckBox
-                        Content="自动启动"
-                        IsChecked="{Binding Frp.((cfg:ServerConfig)Config).AutoStart}" />
-                    <!--<CheckBox
-                        Content="仅允许TLS传输层安全性协议"
-                        IsChecked="{Binding Frp.((cfg:ServerConfig)Config).EnableTls}" />-->
+                    <ctrl:FormItem Header="名称">
+                        <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).Name}" />
+                    </ctrl:FormItem>
+                    <ctrl:FormItem Header=" ">
+                        <CheckBox
+                            Content="自动启动"
+                            IsChecked="{Binding Frp.((cfg:ServerConfig)Config).AutoStart}" />
+                    </ctrl:FormItem>
                 </ctrl:WrapFormItemGroup>
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="端口号">
-                <NumericUpDown
-                    Classes="PortInput"
-                    Value="{Binding Frp.((cfg:ServerConfig)Config).Port}" />
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="连接密钥">
-                <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).Token}" />
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="HTTP端口">
-              <NumericUpDown
-                  Classes="PortInput"
-                  Value="{Binding Frp.((cfg:ServerConfig)Config).HttpPort}" />
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="HTTPS端口">
-                <NumericUpDown
-                    Classes="PortInput"
-                    Value="{Binding Frp.((cfg:ServerConfig)Config).HttpsPort}" />
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="最大连接数">
-              <NumericUpDown
-                  Classes="PortInput"
-                  Value="{Binding Frp.((cfg:ServerConfig)Config).MaxPoolCount}" />
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="控制面板地址">
-                <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardAddress}" />
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="控制面板端口号">
-              <NumericUpDown
-                  Classes="PortInput"
-                  Value="{Binding Frp.((cfg:ServerConfig)Config).DashBoardPort}" />
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="控制面板用户名">
-                <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardUsername}" />
-            </ctrl:FormItem>
-            <ctrl:FormItem Label="控制面板密码">
-                <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardPassword}" />
-            </ctrl:FormItem>
-        </ctrl:StackFormItemGroup>
+            </HeaderedContentControl>
+
+            <HeaderedContentControl
+                Classes="GroupBox"
+                Header="连接配置">
+                <ctrl:WrapFormItemGroup>
+                    <ctrl:FormItem Header="端口号">
+                        <NumericUpDown
+                            Classes="PortInput"
+                            Value="{Binding Frp.((cfg:ServerConfig)Config).Port}" />
+                    </ctrl:FormItem>
+                    <ctrl:FormItem Header="连接密钥">
+                        <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).Token}" />
+                    </ctrl:FormItem>
+                    <ctrl:FormItem Header="HTTP 端口">
+                        <NumericUpDown
+                            Classes="PortInput"
+                            Value="{Binding Frp.((cfg:ServerConfig)Config).HttpPort}" />
+                    </ctrl:FormItem>
+                    <ctrl:FormItem Header="HTTPS 端口">
+                        <NumericUpDown
+                            Classes="PortInput"
+                            Value="{Binding Frp.((cfg:ServerConfig)Config).HttpsPort}" />
+                    </ctrl:FormItem>
+                    <ctrl:FormItem Header="最大连接数">
+                        <NumericUpDown
+                            Classes="PortInput"
+                            Value="{Binding Frp.((cfg:ServerConfig)Config).MaxPoolCount}" />
+                    </ctrl:FormItem>
+                </ctrl:WrapFormItemGroup>
+            </HeaderedContentControl>
+
+            <HeaderedContentControl
+                Classes="GroupBox"
+                Header="{Binding .}">
+                <HeaderedContentControl.HeaderTemplate>
+                    <DataTemplate x:DataType="vm:FrpConfigViewModel">
+                        <StackPanel
+                            Orientation="Horizontal"
+                            Spacing="8">
+                            <TextBlock
+                                VerticalAlignment="Center"
+                                Text="控制台配置" />
+                            <ToggleSwitch
+                                VerticalAlignment="Center"
+                                IsChecked="{Binding Frp.((cfg:ServerConfig)Config).EnableDashBoard}"
+                                OffContent="禁用"
+                                OnContent="启用" />
+                        </StackPanel>
+                    </DataTemplate>
+                </HeaderedContentControl.HeaderTemplate>
+                <ctrl:WrapFormItemGroup>
+                    <ctrl:FormItem
+                        Header="监听地址"
+                        IsVisible="{Binding Frp.((cfg:ServerConfig)Config).EnableDashBoard}">
+                        <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardAddress}" />
+                    </ctrl:FormItem>
+                    <ctrl:FormItem
+                        Header="监听端口"
+                        IsVisible="{Binding Frp.((cfg:ServerConfig)Config).EnableDashBoard}">
+                        <NumericUpDown
+                            Classes="PortInput"
+                            Value="{Binding Frp.((cfg:ServerConfig)Config).DashBoardPort}" />
+                    </ctrl:FormItem>
+                    <ctrl:FormItem
+                        Header="访问用户名"
+                        IsVisible="{Binding Frp.((cfg:ServerConfig)Config).EnableDashBoard}">
+                        <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardUsername}" />
+                    </ctrl:FormItem>
+                    <ctrl:FormItem
+                        Header="访问密码"
+                        IsVisible="{Binding Frp.((cfg:ServerConfig)Config).EnableDashBoard}">
+                        <TextBox Text="{Binding Frp.((cfg:ServerConfig)Config).DashBoardPassword}" />
+                    </ctrl:FormItem>
+
+                </ctrl:WrapFormItemGroup>
+            </HeaderedContentControl>
+        </StackPanel>
     </ScrollViewer>
 </v:ConfigPanelBase>
