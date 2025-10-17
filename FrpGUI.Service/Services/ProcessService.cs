@@ -1,6 +1,7 @@
-﻿using FrpGUI.Models;
+using FrpGUI.Models;
 using System.Diagnostics;
 using System.Text;
+using System.Runtime.InteropServices;
 
 namespace FrpGUI.Services
 {
@@ -42,28 +43,45 @@ namespace FrpGUI.Services
                 {
                     string appDirectory = AppContext.BaseDirectory;
                     
-                    // 1. 优先在应用目录的frp文件夹中查找（推荐存放位置）
-                    string frpDirPath = Path.Combine(appDirectory, "frp", $"frp{FrpConfig.Type}");
-                    if (File.Exists(frpDirPath) || File.Exists(frpDirPath + ".exe"))
+                    // 检查是否为macOS平台
+                    bool isMacOS = RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+                    
+                    // 在macOS平台上，优先查找macos/frp目录
+                    if (isMacOS)
                     {
-                        frpExe = frpDirPath;
-                    }
-                    // 2. 然后尝试配置的路径
-                    else if (frpPath != "./frp") // 避免重复检查
-                    {
-                        string altPath = Path.Combine(appDirectory, frpPath, $"frp{FrpConfig.Type}");
-                        if (File.Exists(altPath) || File.Exists(altPath + ".exe"))
+                        string macosFrpPath = Path.Combine(appDirectory, "macos", "frp", $"frp{FrpConfig.Type}");
+                        if (File.Exists(macosFrpPath) || File.Exists(macosFrpPath + ".exe"))
                         {
-                            frpExe = altPath;
+                            frpExe = macosFrpPath;
                         }
                     }
-                    // 3. 最后尝试直接在应用程序目录中查找（向后兼容）
-                    else
+                    
+                    // 如果macOS特定路径不存在或不是macOS平台，尝试标准路径
+                    if (!File.Exists(frpExe) && !File.Exists(frpExe + ".exe"))
                     {
-                        string directAppDirFrpExe = Path.Combine(appDirectory, $"frp{FrpConfig.Type}");
-                        if (File.Exists(directAppDirFrpExe) || File.Exists(directAppDirFrpExe + ".exe"))
+                        // 1. 优先在应用目录的frp文件夹中查找（推荐存放位置）
+                        string frpDirPath = Path.Combine(appDirectory, "frp", $"frp{FrpConfig.Type}");
+                        if (File.Exists(frpDirPath) || File.Exists(frpDirPath + ".exe"))
                         {
-                            frpExe = directAppDirFrpExe;
+                            frpExe = frpDirPath;
+                        }
+                        // 2. 然后尝试配置的路径
+                        else if (frpPath != "./frp") // 避免重复检查
+                        {
+                            string altPath = Path.Combine(appDirectory, frpPath, $"frp{FrpConfig.Type}");
+                            if (File.Exists(altPath) || File.Exists(altPath + ".exe"))
+                            {
+                                frpExe = altPath;
+                            }
+                        }
+                        // 3. 最后尝试直接在应用程序目录中查找（向后兼容）
+                        else
+                        {
+                            string directAppDirFrpExe = Path.Combine(appDirectory, $"frp{FrpConfig.Type}");
+                            if (File.Exists(directAppDirFrpExe) || File.Exists(directAppDirFrpExe + ".exe"))
+                            {
+                                frpExe = directAppDirFrpExe;
+                            }
                         }
                     }
                 }
