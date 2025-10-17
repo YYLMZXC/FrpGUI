@@ -10,7 +10,7 @@
       "HttpPort": null,
       "HttpsPort": null,
       "MaxPoolCount": 100,
-      "Port": 7001,
+      "Port": 7000,
       "TlsOnly": false,
       "Token": null,
       "Type": "s",
