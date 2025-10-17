@@ -1,4 +1,4 @@
-﻿using FrpGUI.Avalonia.Models;
+using FrpGUI.Avalonia.Models;
 using FrpGUI.Configs;
 using FzLib;
 using System;
@@ -40,6 +40,8 @@ public class UIConfig : AppConfigBase, INotifyPropertyChanged
     public string ServerAddress { get; set; } = "http://localhost:5113";
 
     public string ServerToken { get; set; } = "";
+
+    public string FrpPath { get; set; } = "./frp";
 
     public bool ShowTrayIcon
     {
